@@ -1,0 +1,168 @@
+
+
+import React, { Component } from 'react';
+//import { getTerminiByKlijent,ukloniTermin} from '../WebApi';
+import { getTerminiByKlijent, ukloniTermin } from "../WebApis/requestsGraphQL.js";
+import { connect } from 'react-redux';
+import { loginUser } from '../actions/authActions';
+import TerminAdd from './TerminAdd';
+import Modal from '../Modal';
+import Pagination from "react-js-pagination";
+import TerminDetails from './TerminDetails';
+import Spinner from '../CommonComponents/Spinner'
+import { Link } from 'react-router-dom'
+import Confirm from "../CommonComponents/Confirm"
+
+
+
+class TerminiKlijent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { TerminiList: [], row: 0, limit: 6, Count: 0, showModal: false, modalTitle: "" };
+    this.loadTermini = this.loadTermini.bind(this);
+    this.loadTermini();
+    this.rezervisiTermin = this.rezervisiTermin.bind(this);
+    this.handlePageChange = this.handlePageChange.bind(this);
+    // this.ukloniTermin = this.ukloniTermin.bind(this); 
+
+  }
+  /// get klijent termins:  https://vet-ord-api.herokuapp.com/api/termini/getTerminiByKlijent/5cb4b4944908b91fe4d7ed53
+
+  async loadTermini() {
+    let T = await getTerminiByKlijent(this.props.auth.user.id, this.state.row.toString(), this.state.limit.toString());
+    this.setState({ TerminiList: T.Termini, Count: T.Count });
+    console.log("termini klijenta: ", T);
+
+  }
+  rezervisiTermin() {  // otvaranje modalnog prozora za rezervisanje termina
+    this.setState({ showModal: true, action: "REZERVISI", modalTitle: "Book Appointment" });
+  }
+
+
+  async handlePageChange(pageNumber) {
+    console.log("STATE: ", this.state);
+    let br = (pageNumber - 1) * this.state.limit;
+    //console.log(br);
+    await this.setState({ row: br, pn: pageNumber });
+    this.loadTermini();
+  }
+  showDetails(ID) {
+    this.setState({ idTermin: ID, showModal: true, action: "INFO" , modalTitle: "Details"});
+    let convDat = new Date("19.06.2019");
+    console.log("DATUM: ", convDat.toLocaleDateString('de-DE'));
+  }
+  
+
+  hideModal = () => { this.setState({ showModal: false , modalTitle:""}); this.loadTermini() };
+  getDay(date1) {
+    let dat = new Date(date1);
+    let day = dat.getDate();
+    return day;
+  }
+  getMonthName(date1) {
+    let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "	December"];
+    let dat = new Date(date1);
+    let day = dat.getMonth();
+    return monthNames[day];
+  }
+  getDayName(date1) {
+    let dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+    let dat = new Date(date1);
+    let day = dat.getDay();
+    return dayNames[day];
+  }
+  getYear(date1) {
+
+    let dat = new Date(date1);
+    return dat.getFullYear();
+
+  }
+showModalConfirm(id)
+{
+  this.setState({ idTermin: id, showModal: true, action: "UKLONI" , modalTitle: "Confirm Deletion!"});
+}
+async ukloniTermin() {
+
+    await ukloniTermin(this.state.idTermin);
+    this.setState({ TerminiList: [] });
+    this.loadTermini();
+
+  
+}
+  render() {
+
+    let childComponent = null;
+    
+    if (this.state.action === "INFO") { childComponent = <TerminDetails id={this.state.idTermin} />; }
+    if (this.state.action === "REZERVISI") { childComponent = <TerminAdd refreshParent={this.loadTermini} idKlijent={this.props.auth.user.id} />; }
+    if (this.state.action === "UKLONI") { childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>; }
+    return (
+      <div className="" >
+        <div>
+          <Modal show={this.state.showModal} handleClose={this.hideModal} title={this.state.modalTitle}>
+            <div> {childComponent}  </div>
+          </Modal>
+        </div>
+
+        <div className="custtitlebox">
+          <h4>Your Appointments</h4>
+          <Link to="#" onClick={this.rezervisiTermin}>Book Appointment</Link>
+
+        </div>
+
+
+
+        {this.state.TerminiList.length < 1 ?
+          <Spinner />
+          :
+          this.state.TerminiList.map((item, index) =>
+
+            <div className="card mb-3" key={index} style={{ width: '32%', float: 'left', margin: '0.5%' }}>
+
+              <div className="card-body " >
+
+                <time  className="icon">
+                  <em>{this.getDayName(item.Date)}</em>
+                  <strong>{this.getMonthName(item.Date) + ' / ' + this.getYear(item.Date)}</strong>
+                  <span>{this.getDay(item.Date)}</span>
+                </time>
+
+                <div style={{ backgroundColor: '', float: 'left', marginLeft: '3%',  width: '65%'}}>
+                  <p >  <b>{this.getDayName(item.Date) + ', ' + item.Vrijeme + ':00 h'}</b></p>
+                  <p >{"Appointment with Dr. " + item.Doktor}</p>
+                  <p >{"Client: " + item.Vlasnik}</p>
+                </div>
+
+
+                <div style={{ backgroundColor: '', float: 'left', textAlign: 'right', width: '100%' }}>
+
+
+                  <a href="# " className="card-link" onClick={() => { this.showDetails(item.ID) }} >Details</a>
+                  {item.Obavljen !== true ?
+                    <a href="# " className="card-link text-danger" onClick={() => { this.showModalConfirm(item.ID) }}>Cancel</a>
+                    : ""}
+
+                </div>
+              </div>
+            </div>
+
+          )}
+
+
+        <Pagination activePage={this.state.pn} itemsCountPerPage={6} onChange={this.handlePageChange}
+          totalItemsCount={this.state.Count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
+          linkClass="" activeLinkClass="" activeClass="page-item active" disabledClass="text-secondary" firstPageText="first" lastPageText="last" nextPageText=">" prevPageText="<"
+        />
+
+      </div>
+    );
+  }
+}
+
+// export default Login;
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+export default connect(mapStateToProps, { loginUser })(TerminiKlijent);
