@@ -15,3 +15,19 @@ export const GET_POSTS = 'GET_POSTS';
 export const GET_POST = 'GET_POST';
 export const ADD_POST = 'ADD_POST';
 export const DELETE_POST = 'DELETE_POST';
+
+// price list:
+export const GET_PRICELIST = 'GET_PRICELIST';
+// contacts:
+export const GET_CONTACTS = 'GET_CONTACTS';
+
+// notifications:
+export const GET_NOTIFICATIONS = 'GET_NOTIFICATIONS';
+export const RESET_NOTIFICATION_SEARCH = 'RESET_NOTIFICATION_SEARCH';
+export const NOTIFICATION_LOADING = 'NOTIFICATION_LOADING';
+// users (employees and clients)
+export const GET_USERS = 'GET_USERS';
+export const GET_USER = 'GET_USER';
+export const USERS_LOADING = 'USERS_LOADING';
+export const UPDATE_USER = 'UPDATE_USER';
+export const LOGIN_LOADING = 'LOGIN_LOADING';

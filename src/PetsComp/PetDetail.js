@@ -23,31 +23,30 @@ class PetDetail extends Component {
     }
     async loadPetDetails() {
 
-  
+
         let D = await getPetDetails(this.props.petID);
         this.setState({ petDetail: D });
-    
+
     }
     async loadTimeline() {
 
         let timeItems = await loadTimeline(this.props.petID, "0");
         await this.setState({ timeLineList: timeItems });
-     
+
     }
     async selectItem(id) {
         this.setState({ itemDetails: null, showRightPanel: true });
 
         let d = await getTimelineItemDetails(id);
         this.setState({ itemDetails: d });
-       
+
     }
 
-    showPanel(index)
-    {
-     
-       let showPnl= ["hidde", "hidde"];
-       showPnl[index]="";
-       this.setState({showPanelAt:showPnl});
+    showPanel(index) {
+
+        let showPnl = ["hidde", "hidde"];
+        showPnl[index] = "";
+        this.setState({ showPanelAt: showPnl });
     }
 
 
@@ -55,9 +54,9 @@ class PetDetail extends Component {
 
         let customAlert = null;
         if (this.state.timeLineList != null && this.state.timeLineList.length < 1) {
-            customAlert = <div className="alert alert-dismissible alert-warning">
+            customAlert = <div><br /><div className="alert alert-dismissible alert-warning">
                 <strong>Warning!</strong> <br /> This Pet doesn't have any medical service!
-                </div>
+                </div></div>
         }
         let timelinePanel = null;
         if (this.state.timeLineList != null && this.state.timeLineList.length > 0) {
@@ -132,7 +131,7 @@ class PetDetail extends Component {
                 }
             </div>
         }
-        
+
 
 
 
@@ -157,11 +156,11 @@ class PetDetail extends Component {
                     </div>
                     <div className="custcardmedicalservice"> <br />
 
-                        <h6 className="text-muted">Rasa </h6>
+                        <h6 className="text-muted">Race </h6>
                         <h5> {this.state.petDetail.Rasa} </h5>
-                        <h6 className="text-muted">Vrsta </h6>
+                        <h6 className="text-muted">Type of pet </h6>
                         <h5>  {this.state.petDetail.VrstaPacijenta}</h5>
-                        <h6 className="text-muted">Tezina </h6>
+                        <h6 className="text-muted">Weight </h6>
                         <h5>  {this.state.petDetail.Tezina + ' kg'} </h5>
                         <h6 className="text-muted">Date of birth </h6>
                         <h5>  {this.state.petDetail.DatumRodjenja} </h5>

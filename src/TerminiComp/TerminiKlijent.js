@@ -6,7 +6,7 @@ import { getTerminiByKlijent, ukloniTermin } from "../WebApis/requestsGraphQL.js
 import { connect } from 'react-redux';
 import { loginUser } from '../actions/authActions';
 import TerminAdd from './TerminAdd';
-import Modal from '../Modal';
+import Modal from '../CommonComponents/Modal';
 import Pagination from "react-js-pagination";
 import TerminDetails from './TerminDetails';
 import Spinner from '../CommonComponents/Spinner'
@@ -31,7 +31,7 @@ class TerminiKlijent extends Component {
   async loadTermini() {
     let T = await getTerminiByKlijent(this.props.auth.user.id, this.state.row.toString(), this.state.limit.toString());
     this.setState({ TerminiList: T.Termini, Count: T.Count });
-    console.log("termini klijenta: ", T);
+
 
   }
   rezervisiTermin() {  // otvaranje modalnog prozora za rezervisanje termina
@@ -40,27 +40,26 @@ class TerminiKlijent extends Component {
 
 
   async handlePageChange(pageNumber) {
-    console.log("STATE: ", this.state);
+
     let br = (pageNumber - 1) * this.state.limit;
     //console.log(br);
     await this.setState({ row: br, pn: pageNumber });
     this.loadTermini();
   }
   showDetails(ID) {
-    this.setState({ idTermin: ID, showModal: true, action: "INFO" , modalTitle: "Details"});
-    let convDat = new Date("19.06.2019");
-    console.log("DATUM: ", convDat.toLocaleDateString('de-DE'));
-  }
-  
 
-  hideModal = () => { this.setState({ showModal: false , modalTitle:""}); this.loadTermini() };
+    this.setState({ idTermin: ID, showModal: true, action: "INFO", modalTitle: "Details" });
+  }
+
+
+  hideModal = () => { this.setState({ showModal: false, modalTitle: "" }); this.loadTermini() };
   getDay(date1) {
     let dat = new Date(date1);
     let day = dat.getDate();
     return day;
   }
   getMonthName(date1) {
-    let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "	December"];
+    let monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "Sept.", "October", "Nov.", "	Dec."];
     let dat = new Date(date1);
     let day = dat.getMonth();
     return monthNames[day];
@@ -77,22 +76,21 @@ class TerminiKlijent extends Component {
     return dat.getFullYear();
 
   }
-showModalConfirm(id)
-{
-  this.setState({ idTermin: id, showModal: true, action: "UKLONI" , modalTitle: "Confirm Deletion!"});
-}
-async ukloniTermin() {
+  showModalConfirm(id) {
+    this.setState({ idTermin: id, showModal: true, action: "UKLONI", modalTitle: "Confirm Deletion!" });
+  }
+  async ukloniTermin() {
 
     await ukloniTermin(this.state.idTermin);
     this.setState({ TerminiList: [] });
     this.loadTermini();
 
-  
-}
-  render() {
 
+  }
+  render() {
+    console.log("STATE: ", this.state);
     let childComponent = null;
-    
+
     if (this.state.action === "INFO") { childComponent = <TerminDetails id={this.state.idTermin} />; }
     if (this.state.action === "REZERVISI") { childComponent = <TerminAdd refreshParent={this.loadTermini} idKlijent={this.props.auth.user.id} />; }
     if (this.state.action === "UKLONI") { childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>; }
@@ -121,13 +119,13 @@ async ukloniTermin() {
 
               <div className="card-body " >
 
-                <time  className="icon">
+                <time className="icon">
                   <em>{this.getDayName(item.Date)}</em>
                   <strong>{this.getMonthName(item.Date) + ' / ' + this.getYear(item.Date)}</strong>
                   <span>{this.getDay(item.Date)}</span>
                 </time>
 
-                <div style={{ backgroundColor: '', float: 'left', marginLeft: '3%',  width: '65%'}}>
+                <div style={{ backgroundColor: '', float: 'left', marginLeft: '3%', width: '65%' }}>
                   <p >  <b>{this.getDayName(item.Date) + ', ' + item.Vrijeme + ':00 h'}</b></p>
                   <p >{"Appointment with Dr. " + item.Doktor}</p>
                   <p >{"Client: " + item.Vlasnik}</p>
@@ -149,11 +147,13 @@ async ukloniTermin() {
           )}
 
 
-        <Pagination activePage={this.state.pn} itemsCountPerPage={6} onChange={this.handlePageChange}
-          totalItemsCount={this.state.Count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
-          linkClass="" activeLinkClass="" activeClass="page-item active" disabledClass="text-secondary" firstPageText="first" lastPageText="last" nextPageText=">" prevPageText="<"
-        />
 
+        <div className="custpaging">
+          <Pagination activePage={this.state.pn} itemsCountPerPage={6} onChange={this.handlePageChange}
+            totalItemsCount={this.state.Count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
+            linkClass="" activeLinkClass="" activeClass="page-item active" disabledClass="text-secondary" firstPageText="first" lastPageText="last" nextPageText=">" prevPageText="<"
+          />
+        </div>
       </div>
     );
   }

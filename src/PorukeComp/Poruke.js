@@ -10,8 +10,8 @@ import {
 } from '../WebApi';
 
 import { getCountNewMessage, getPoruke, PostPoruke, setProcitanoMsg, delleteMessage, getPosiljaociPoruka } from "../WebApis/requestsGraphQL.js";
-
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom'
 
 
 
@@ -19,7 +19,7 @@ class Poruke extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      showList: [], poruke: [], rola: "Klijent", limit: 6, rowPosiljaoci: 0, rowPoruke: 0,
+      showList: [], poruke: [], rola: "Client", limit: 6, rowPosiljaoci: 0, rowPoruke: 0,
       selectedUser: { Korisnik: "", KorisnikID: "", Slika: "" },
       showMsgBlock: false, countNewMess: "", logedUser: null, hoverItem: -1
     };
@@ -46,10 +46,11 @@ class Poruke extends Component {
 
   async getCountNewMessag() {
     let coutNewMess = await getCountNewMessage(this.props.auth.user.id);
-    if (coutNewMess.Osoblje === 0) coutNewMess.Osoblje = null;
-    if (coutNewMess.Klijent === 0) coutNewMess.Klijenti = null;
+    if (coutNewMess.Osoblje === 0) coutNewMess.Osoblje = "";
+    if (coutNewMess.Klijent === 0) coutNewMess.Klijent = "";
     await this.setState({ countNewMess: coutNewMess });
-    // console.log("coutNewMess:", this.state.countNewMess);
+    console.log("ID USER:", this.props.auth.user.id);
+    console.log("coutNewMess:", this.state.countNewMess);
   }
 
 
@@ -106,8 +107,8 @@ class Poruke extends Component {
 
   async changeRole() {
 
-    let newRpla = "Klijent";
-    if (this.state.rola === "Klijent") { newRpla = "Osoblje"; }
+    let newRpla = "Client";
+    if (this.state.rola === "Client") { newRpla = "Osoblje"; }
     await this.setState({ rola: newRpla, rowPosiljaoci: 0, showMsgBlock: false });
     this.search();
   }
@@ -167,10 +168,10 @@ class Poruke extends Component {
 
           <div className="messagesearchelem2">
             <div className="messagesearchlist" ref={(el) => { this.messagesEnd = el; }} >
-              <table className="table-hover">
+              <table className="table-hover" style={{  width: "100%"}}>
                 <tbody>
                   {this.state.showList.map((item, index) =>
-                    <tr className="" key={index}><th><PorukaItem itemShow={item} selectItem={this.selectItem} /></th></tr>
+                    <tr  key={index}><th><PorukaItem itemShow={item} selectItem={this.selectItem} /></th></tr>
                   )}
                 </tbody>
               </table>
@@ -196,15 +197,15 @@ class Poruke extends Component {
                   onMouseEnter={() => { this.hoverMsg(index) }} onMouseLeave={() => { this.hoverMsg(index) }}    >
 
                   <div className={item.PosiljaocID === this.props.auth.user.id ? "messageitem" : "messageitemkl"} data-toggle="tooltip" data-placement="bottom" title={item.Datum + '  /  ' + item.Vrijeme}>
-                    {item.Sadrzaj}
-                  </div>
-                  {index === this.state.hoverItem && item.PosiljaocID === this.props.auth.user.id ?
-                    <div className="right">
-                      <button type="button" className="btn btn-link" onClick={() => { this.delleteMsg(item._id, index) }} >
+                    {index === this.state.hoverItem && item.PosiljaocID === this.props.auth.user.id ?
+                      <Link style={{ marginRight: "10px" }} className="" onClick={() => { this.delleteMsg(item._id, index) }} >
                         <span className="text-danger">&#10006;</span>
-                      </button>
-                    </div>
-                    : ""}
+                      </Link>
+                      : ""}
+                    {item.Sadrzaj}
+
+                  </div>
+
                   <br />
                 </div>
               )}

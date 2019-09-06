@@ -10,13 +10,13 @@ class Home extends Component {
 
       <div >
 
-          <br />
-                   <img  src={MainPhoto}  style={{ width: '100%' }} alt="Naslovna"  />
-                  
-                   <h1>Dobrodošli</h1>
-                   <p className="lead">Veterinarska ordinacija</p> 
-        
-</div>
+        <br />
+        <img src={MainPhoto} style={{ width: '100%' }} alt="Naslovna" />
+
+        <h1>Wellcome</h1>
+        <p className="lead">Veterinary practice</p>
+
+      </div>
     );
   }
 }

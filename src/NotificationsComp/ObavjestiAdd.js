@@ -2,7 +2,8 @@ import React, { Component } from "react";
 //import { saveObavjest } from "../WebApi";
 //import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
-import { addObavjest } from "../WebApis/requestsGraphQL.js";
+import { addNotification } from '../actions/notificationActions';
+//import { addObavjest } from "../WebApis/requestsGraphQL.js";
 
 class ObavjestiAdd extends Component {
   constructor(props) {
@@ -24,7 +25,8 @@ class ObavjestiAdd extends Component {
       Aktivno: true
     };
 
-    addObavjest(obavjest);
+   // addObavjest(obavjest);
+    this.props.addNotification(obavjest);
     this.content.value = this.title.value = "";
     this.setState({ showErrorAlert: false, showSuccessAlert: true, alertMessage: "You successfully save data." });
     //alert("Uspjesno izvrseno spasavanje nove obavjesti!");
@@ -85,4 +87,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps)(ObavjestiAdd);
+export default connect(mapStateToProps, {addNotification})(ObavjestiAdd);

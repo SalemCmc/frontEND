@@ -15,6 +15,7 @@ class Modal extends Component {
       return null;
     }
     return (
+
       <div className="modal display-block">
         <section>
           <div className="modal-dialog" role="document">

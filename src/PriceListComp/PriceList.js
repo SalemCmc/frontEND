@@ -5,27 +5,23 @@
 import React, { Component } from 'react';
 import Spinner from '../CommonComponents/Spinner'
 //import { getPriceList } from '../WebApi';   DONT USE!
-import { getPriceList } from "../WebApis/requestsGraphQL.js";
+//import { getPriceList } from "../WebApis/requestsGraphQL.js";  moved to redux
+// REDUX:
+import { connect } from 'react-redux';
+import { getPriceListA } from '../actions/priceListActions';
 
 class PriceList extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { priceList: [] };
 
-        this.loadPriceList = this.loadPriceList.bind(this);
-        this.loadPriceList();
+    componentDidMount() {
+        // IF store in REDUX is empty call function getPriceList... 
+        if (this.props.price.priceList.length < 1) {
+            this.props.getPriceListA();
+        }
     }
-    async loadPriceList() {
-        let priceList = await getPriceList();
-        this.setState({ priceList });
-        // console.log("LSITA CIJENA: ", this.state.priceList);
-
-    }
-
 
     render() {
         let showList = null;
-        if (this.state.priceList.length < 1) {
+        if (this.props.price.priceList.length < 1) {
             showList = <Spinner />;
         }
         else {
@@ -33,7 +29,7 @@ class PriceList extends Component {
                 <table className="table table-hover">
                     <thead><tr className="table-info"><th>Service</th><th>Price</th></tr></thead>
                     <tbody>
-                        {this.state.priceList.map((item, index) =>
+                        {this.props.price.priceList.map((item, index) =>
                             <tr key={index}><td>{item.Service}</td><td>{item.Price + ' KM'}</td></tr>
                         )}
                     </tbody>
@@ -42,15 +38,16 @@ class PriceList extends Component {
             </div>;
         }
         return (
-
             <div className="" >
-
                 {showList}
             </div>
-
         );
     }
 }
+//export default PriceList;
 
-
-export default PriceList;
+// REDUX:
+const mapStateToProps = state => ({
+    price: state.price
+});
+export default connect(mapStateToProps, { getPriceListA })(PriceList);

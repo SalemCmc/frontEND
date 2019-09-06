@@ -1,17 +1,19 @@
 
 import React, { Component } from 'react';
-import { getKorisnikByID,  getAppointments, getPetByOwnerID, getStatisticsData } from "../WebApis/requestsGraphQL.js";
+import { getUserByIDG, getAppointments, getPetByOwnerID, getStatisticsData } from "../WebApis/requestsGraphQL.js";
 import avatarDefault from '../CommonComponents/avatarDefault.jpg'
 import { getDayName, getDateString } from '../Utils/DateUtils';
-import Modal from '../Modal';
+import Modal from '../CommonComponents/Modal';
 import PetDetail from '../PetsComp/PetDetail';
 import TerminDetails from '../TerminiComp/TerminDetails';
 import { Link } from 'react-router-dom'
+//REDUX:
+import { connect } from 'react-redux';
 
 class KorisniciDetails extends Component {
   constructor(props) {
     super(props);
-    this.state = { Korisnik: {}, timeLineList: [], timelineRow: 0, pets: {items:[]}, petRow: 0, showModal: false,modalTitle:"",  statisctics: {} };
+    this.state = { Korisnik: {}, timeLineList: [], timelineRow: 0, pets: { items: [] }, petRow: 0, showModal: false, modalTitle: "", statisctics: {} ,showPets:false};
     this.loadDetails = this.loadDetails.bind(this);
     this.handleModal = this.handleModal.bind(this);
     this.loadTimeline = this.loadTimeline.bind(this);
@@ -19,20 +21,18 @@ class KorisniciDetails extends Component {
 
     this.loadDetails();
   }
-  async handleModal(action,id) {
-    let childComp="";
-    let modTitle="";
-    if (action==="TIMELINEDETAIL")
-    {
-      childComp=<TerminDetails id={id} />;
-      modTitle="Appointment Details";
+  async handleModal(action, id) {
+    let childComp = "";
+    let modTitle = "";
+    if (action === "TIMELINEDETAIL") {
+      childComp = <TerminDetails id={id} />;
+      modTitle = "Appointment Details";
     }
-    else
-    {
-      childComp=<PetDetail petID={id} />;
-      modTitle="Pet Details";
+    else {
+      childComp = <PetDetail petID={id} />;
+      modTitle = "Pet Details";
     }
-    await this.setState({ showModal: !this.state.showModal,childModalComp:childComp , modalTitle: modTitle });
+    await this.setState({ showModal: !this.state.showModal, childModalComp: childComp, modalTitle: modTitle });
   }
   async loadDetails() {
 
@@ -42,7 +42,7 @@ class KorisniciDetails extends Component {
 
 
     this.setState({ timeLineList: timeline, pets: pets1, statisctics: stat });
-    getKorisnikByID(this.props.match.params.id).then(res => {
+    getUserByIDG(this.props.match.params.id).then(res => {
       let K = res;
 
       if (K != null) {
@@ -50,7 +50,14 @@ class KorisniciDetails extends Component {
           K.Slika = avatarDefault;
         }
       }
-      this.setState({ Korisnik: K, slikaURL: K.Slika });
+ 
+      let showPets1=true;
+      if(this.props.auth.user.id===K._id && this.props.auth.user.rola==="Doctor")
+      {
+         showPets1=false;
+      }
+      
+       this.setState({ Korisnik: K, slikaURL: K.Slika , showPets:showPets1});
 
     })
   }
@@ -63,27 +70,25 @@ class KorisniciDetails extends Component {
   }
   async loadPets(action) {
 
-            let row= this.state.petRow;
-            if(action==="NEXT")
-            {
-              row=row+1;
-            }
-            else
-            {
-              row=row-1;
-            }
-            if(row<0 || this.state.pets.count===row){ return;}
-            var newPets = await getPetByOwnerID(this.props.match.params.id, row, 3);
-            this.setState({ pets: newPets , petRow:row});
+    let row = this.state.petRow;
+    if (action === "NEXT") {
+      row = row + 1;
+    }
+    else {
+      row = row - 1;
+    }
+    if (row < 0 || this.state.pets.count === row) { return; }
+    var newPets = await getPetByOwnerID(this.props.match.params.id, row, 3);
+    this.setState({ pets: newPets, petRow: row });
   }
 
   render() {
-  
+console.log("state: ",this.state.showPets);
 
     return (
       <div className="" >
 
-      
+
 
 
         <Modal show={this.state.showModal} handleClose={this.handleModal} title={this.state.modalTitle} >
@@ -144,7 +149,7 @@ class KorisniciDetails extends Component {
             <center> <h5 className="text-muted">Appointments Timeline</h5></center>
 
             {this.state.timeLineList.map((item, index) =>
-              <div key={item.id}   onClick={() => { this.handleModal("TIMELINEDETAIL",item.id) }}>
+              <div key={item.id} onClick={() => { this.handleModal("TIMELINEDETAIL", item.id) }}>
                 {(index === 0 && item.Done === true) ? <h5 className="text-muted">Done </h5> : ""}
                 {(index === 0 && item.Done === false) ? <h5 className="text-muted">Incoming </h5> : ""}
                 {(index !== 0 && this.state.timeLineList[index - 1].Done === false && item.Done === true) ? <h5 className="text-muted">Done </h5> : ""}
@@ -178,31 +183,36 @@ class KorisniciDetails extends Component {
             </div>
           </div>
 
+
+          
+          {this.state.showPets===false ? "" :
           <div className="petpnl">
             <center> <h5 className="text-muted">Pets</h5></center> <hr />
-
             <p className="custarrow" style={{ float: "left" }} onClick={() => { this.loadPets("PREV") }}   >&#10094;</p>
-
             {this.state.pets.items.map((item) =>
               <div key={item._id} className="petitemdetails" >
-                <center>     <img className="petitemimage" src={item.Slika} alt="photoUser" onClick={() => { this.handleModal("PETEDETAIL",item._id) }} />
+                <center>     <img className="petitemimage" src={item.Slika} alt="photoUser" onClick={() => { this.handleModal("PETEDETAIL", item._id) }} />
                   <h5 className="text-muted">{item.Ime} </h5>  </center>
               </div>
             )}
             <p className="custarrow right" onClick={() => { this.loadPets("NEXT") }}    >&#10095;</p>
           </div>
+          }
+
+
 
 
         </div>
-
-
-
-
-
-
       </div>
     );
   }
 }
 
-export default KorisniciDetails;
+//export default KorisniciDetails;
+
+const mapStateToProps = state => ({
+  auth: state.auth
+
+});
+
+export default connect(mapStateToProps)(KorisniciDetails);

@@ -12,18 +12,16 @@ class Termini extends Component {
 
 
   render() {
-    //console.log("logirani user: ", this.props.auth.user);
-    let itemTermin=null;
-    if(this.props.auth.user.rola==="Doktor")
-    {
-      itemTermin=<TerminiDoktor/>;
+    // console.log("logirani user: ", this.props.auth.user);
+    let itemTermin = null;
+    if (this.props.auth.user.rola === "Doctor") {
+      itemTermin = <TerminiDoktor />;
     }
-    if(this.props.auth.user.rola==="Klijent")
-    {
-      itemTermin=<TerminiKlijent/>;
+    if (this.props.auth.user.rola === "Client") {
+      itemTermin = <TerminiKlijent />;
     }
-     return ( <div>{itemTermin}</div>  );
-   
+    return (<div>{itemTermin}</div>);
+
   }
 }
 //export default Termini;

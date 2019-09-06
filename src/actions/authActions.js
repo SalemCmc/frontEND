@@ -3,50 +3,49 @@
 import axios from 'axios';
 import setAuthToken from '../Utils/setAuthToken';
 //import jwt_decode from 'jwt-decode';
-import { GET_ERRORS, SET_CURRENT_USER } from './types';
+import { GET_ERRORS, CLEAR_ERRORS, SET_CURRENT_USER, LOGIN_LOADING } from './types';
 
 
-// Login - Get User Token
+
 export const loginUser = userData => dispatch => {
-  // console.log("AKCIJA OKINUTA!");
+
+  dispatch(setLoginLoading(true));
+  dispatch({ type: CLEAR_ERRORS, payload: { error: false, errorMessage: "" } })
+
   axios
     .post('https://vet-ord-api.herokuapp.com/api/korisnici/login/', userData)
     .then(res => {
 
       let loggedUser = JSON.stringify(res.data.user);
       localStorage.setItem('loggedUser', loggedUser);
-      // let ime = JSON.parse(user).userName;
-      // console.log("JSON USERA: ", ime);
-
       // Save to localStorage
       const { token } = res.data.token;
       // Set token to ls
-      localStorage.setItem('jwtToken', token);    // potrebno da bi axios imao token uvijek!  / setuje se uvijek na app.js
+      localStorage.setItem('jwtToken', res.data.token);
+      localStorage.setItem('permissions', res.data.permissions);
+      //localStorage.setItem('jwtToken', token);    // potrebno da bi axios imao token uvijek!  / setuje se uvijek na app.js
+      console.log("localStorage: ", localStorage);
       // Set token to Auth header
       setAuthToken(token);
-      // Decode token to get user data
-      //const decoded = jwt_decode(token);
-      // Set current user
+      dispatch(setCurrentUser(res.data.user, res.data.permissions));
 
-      dispatch(setCurrentUser(res.data.user));
-      //dispatch(setCurrentUser(res.data));
     })
     .catch(err => {
-      console.log("AXIOS LOGIN ERROR: ", err);
-      dispatch({
-        type: GET_ERRORS,
-        payload: err.response.data
-      })
+      dispatch(setLoginLoading(false));
+      dispatch({ type: GET_ERRORS, payload: err })
+
     }
     );
 };
 
+
 // Set logged in user
-export const setCurrentUser = (decoded, isAuth = true) => {
+export const setCurrentUser = (decoded, decodedPermision, isAuth = true) => {
   return {
     type: SET_CURRENT_USER,
     payload: decoded,
-    isAuth: isAuth
+    isAuth: isAuth,
+    permiss: decodedPermision
   };
 };
 
@@ -55,8 +54,16 @@ export const logoutUser = () => dispatch => {
   // Remove token from localStorage
   localStorage.removeItem('jwtToken');
   localStorage.removeItem('loggedUser');
+  localStorage.removeItem('permissions');
   // Remove auth header for future requests
   setAuthToken(false);
   // Set current user to {} which will set isAuthenticated to false
-  dispatch(setCurrentUser({}, false));
+  dispatch(setCurrentUser({}, null, false));
+};
+
+export const setLoginLoading = (value) => {
+  return {
+    type: LOGIN_LOADING,
+    payload: value
+  };
 };

@@ -15,6 +15,7 @@ async function graphqlRequest(query, variables = {}) {
   const response = await fetch(endpointURL, request);
   const responseBody = await response.json();
 
+
   // Promise.all(response, responseBody);  /// await u jednoj liniji nece ici dalje dok se ne izvrse oba!
 
   if (responseBody.errors) {
@@ -64,7 +65,7 @@ export async function addObavjest(input) {
 //#endregion 
 
 //#region                                         KORISNICI
-export async function getKorisnici(searchString, role, active, row, limit) {
+export async function getUsersG(searchString, role, active, row, limit) {
   //console.log("variables: ");
   const query = `query getKor ($input : searchParams)
         { 
@@ -89,7 +90,7 @@ export async function getStatisticsData(id) {
   return kor.getStatisticsDataByID;
 }
 
-export async function getKorisnikByID(id) {
+export async function getUserByIDG(id) {
   const query = `query getKor ($id: ID!)
                   {
                     getKorisnikByID(id:$id)
@@ -112,7 +113,7 @@ export async function getKorisnikByID(id) {
 
 // ------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------
-export async function updateKorisnik(input) {
+export async function updateUserG(input) {
 
   let resultSet = Object.keys(input).toString();
   resultSet = resultSet.replace("NewPassword", " ");
@@ -369,6 +370,7 @@ export async function getPosiljaociPoruka(ID1, role, row, searchString, limit) {
                       {ID Message Datum SagovornikID Sagovornik SagovornikAvatar Procitano
                       }}`;
   let input = { ID1, searchString, role, row, limit }
+  console.log("input:::::", input);
   let resp = await graphqlRequest(query, { input });
   return resp.getPosiljaociPoruka;
 
@@ -388,7 +390,7 @@ export async function loadTimeline(id, row) {
   return resp.getPetServiceTimeline;
 }
 
-export async function getTimelineItemDetails(id) {
+export async function getTimelineItemDetails(id) { console.log("RESPO: ", id);
   const query = `query getTimelineDetail($id : ID!)
                                     {getPetServiceDetails(id: $id)
                                      { Service Date Time  Price Description Doctor DoctorAvatar
@@ -397,7 +399,7 @@ export async function getTimelineItemDetails(id) {
                                   }`;
 
   let resp = await graphqlRequest(query, { id });
-  //console.log("RESPO: ", resp.getPetServiceTimeline);
+ 
   return resp.getPetServiceDetails;
 }
 
@@ -426,6 +428,31 @@ export async function getContacts() {
 }
 //#endregion
 
+
+
+
+
+
+//#region                 A D M I N  
+export async function getAllPermissions() {
+  const query = `{
+                             Permissions{_id Group Name Desc}
+                           }`;
+  let resp = await graphqlRequest(query);
+  //   console.log("priceList: ",priceList);
+  return resp.Permissions;
+}
+
+export async function getPermissionsByRole(id) {
+  const query = `query getperroll($id : ID!)
+                                    {getPermissionsByRole(id: $id)  { _id RoleID PermisionID, Group Name }
+                                  }`;
+
+  let resp = await graphqlRequest(query, { id });
+  return resp.getPermissionsByRole;
+
+}
+//#endregion
 
 
 

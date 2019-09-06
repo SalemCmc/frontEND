@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom'
 import Confirm from "../CommonComponents/Confirm"
 
-import Modal from '../Modal';
+import Modal from '../CommonComponents/Modal';
 
 class TerminiDoktor extends Component {
   constructor(props) {
@@ -23,7 +23,7 @@ class TerminiDoktor extends Component {
     this.state = {
       TerminiList: [], currentDate: (new Date(new Date().getFullYear(), new Date().getMonth(),
         new Date().getDate() - new Date().getDay() + 1)),  // ovo je ponedeljak!
-      showWek: "",  action: "", showModal: false, modalTitle: ""
+      showWek: "", action: "", showModal: false, modalTitle: ""
     };
     this.loadTermini = this.loadTermini.bind(this);
     this.loadTermini();
@@ -65,15 +65,15 @@ class TerminiDoktor extends Component {
   }
   async ukloniTermin() {
     //if (window.confirm("Da li ste sigurni da želite ukloniti termin?")) {
-     //console.log("uklon termina JE: : ", this.state.idTermin);    // novi tab:   window.open("exit.html", "Thanks for Visiting!");
-     
-     
-      await ukloniTermin( this.state.idTermin);
-      this.setState({ TerminiList: [], showModal: false, modalTitle: "" });
-      this.loadTermini();
+    //console.log("uklon termina JE: : ", this.state.idTermin);    // novi tab:   window.open("exit.html", "Thanks for Visiting!");
 
-    }
-  
+
+    await ukloniTermin(this.state.idTermin);
+    this.setState({ TerminiList: [], showModal: false, modalTitle: "" });
+    this.loadTermini();
+
+  }
+
 
   onClickAction(action, id, klijentID) {//poziva se iz subkomponente rowCell kao parametar salje akciju (obrisi termin, evidentiraj, info itd...)
     //console.log("action: ", action); console.log("klijentID: ", klijentID);
@@ -88,7 +88,7 @@ class TerminiDoktor extends Component {
 
   rezervisiTermin() {  // otvaranje modalnog prozora za rezervisanje termina
     this.setState({ showModal: true, action: "REZERVISI", modalTitle: "Book Appointment" });
-    
+
   }
 
   hideModal = () => { this.setState({ showModal: false }); this.loadTermini() };

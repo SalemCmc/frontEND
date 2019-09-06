@@ -63,22 +63,26 @@ class PetAdd extends Component {
             Slika: this.state.slikaURL //slika
         };
 
-        console.log("NEW PACwwww: ", newPet);
+
         let Resp = await postPet(newPet);
 
+
         if (Resp.errorStatus === true) {
-            this.setState({ showErrorAlert: true, alertMessage: Resp.errorStatus });
+            console.log("SAVE PET IF: ", Resp);
+            await this.setState({ showErrorAlert: true, alertMessage: Resp.errorStatus });
         }
         else {
+            console.log("SAVE PET ELSE: ", Resp);
             this.cleanFields();
+
+            await this.setState({ slikaURL: "", showErrorAlert: false, showSuccessAlert: true, alertMessage: "You successfully save data." });
             this.props.refreshParent();
-            this.setState({ slikaURL: "", showErrorAlert: false, showSuccessAlert: true, alertMessage: "You successfully save data." });
         }
     }
     async setPhotoUrl(photo, avatar1) {
 
-        await this.setState({ slikaURL: avatar1 });
-        console.log("STATE:.................... ", this.state);
+        await this.setState({ slikaURL: photo });
+
 
     }
     closeAlerts() {
@@ -90,19 +94,20 @@ class PetAdd extends Component {
 
 
     render() {
-        console.log("ADD PET STATE_ render:", this.state);
+        console.log("STATE: ", this.state);
+
         return (
             <div>
 
                 {this.state.showSuccessAlert === true ?
                     <div className="alert alert-dismissible alert-success">
-                        <button type="button" className="close" onClick={this.closeAlerts} >&times;</button>
+
                         <strong>Well done!</strong> {this.state.alertMessage}
                     </div>
                     : ""}
                 {this.state.showErrorAlert === true ?
                     <div className="alert alert-dismissible alert-danger">
-                        <button type="button" className="close" onClick={this.closeAlerts}>&times;</button>
+
                         <strong>Oh snap!</strong> {this.state.alertMessage}
                     </div>
                     : ""}
@@ -114,7 +119,7 @@ class PetAdd extends Component {
                         Name    <input className="form-control form-control-sm" ref={(ref) => this.ime = ref} type="text" />
                         Date of birth   <input className="form-control form-control-sm" ref={(ref) => this.datum = ref} type="date" />
                         Race             <input className="form-control form-control-sm" ref={(ref) => this.rasa = ref} type="text" />
-                        Weight(kg)       <input className="form-control form-control-sm" ref={(ref) => this.tezina = ref} type="number" />
+                        Weight(kg)       <input className="form-control form-control-sm" ref={(ref) => this.tezina = ref} type="number" min="0.5" />
                         Type            <select className="form-control form-control-sm" ref={(ref) => this.vrsta = ref}>
                             <option value="">Choose type of pet</option>
                             {this.state.types.map(opt => { return (<option key={opt._id} value={opt._id}>{opt.Value}</option>); })}

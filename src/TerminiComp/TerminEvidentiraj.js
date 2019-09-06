@@ -69,7 +69,7 @@ class TerminEvidentiraj extends Component {
             Terapija: {},
             Usluga: {
                 VrstaUslugeID: this.Usluga.value,
-                PacijentID: this.PacijentID.value,
+                PacijentID: this.Pacijent.value,
                 TerminID: "",   // bit ce prazan str, na apiju ce se setovati...
                 Cijena: this.Cijena.value,
                 Opis: this.OpisUsluge.value,
@@ -92,10 +92,10 @@ class TerminEvidentiraj extends Component {
             }
         }
 
-        // console.log("objekat za insert: ", objectForInsert);
+        //console.log("objekat za insert: ", objectForInsert);
 
 
-        //postUsluga(objectForInsert);
+        // postUsluga(objectForInsert);
 
 
         EvidentirajTermin(objectForInsert);
@@ -111,6 +111,9 @@ class TerminEvidentiraj extends Component {
         this.Cijena.className = this.Usluga.className = this.Anamneza.className = "form-control form-control-sm";
         if (this.Cijena.value.length < 1 || this.Usluga.value.length < 1 || this.Pacijent.value.length < 1) {
             this.Cijena.className = this.Usluga.className = this.Pacijent.className = "form-control form-control-sm is-invalid"; valid = false;
+            this.MedServiceTab.className = "nav-link active";
+            this.DiagnosisTab.className = this.MedicamentsTab.className = "nav-link";
+
         }
 
         return valid;
@@ -155,7 +158,7 @@ class TerminEvidentiraj extends Component {
 
         let showPnlAt = ["hidde", "hidde", "hidde"];
         showPnlAt[index] = "";
-      
+
         this.setState({ showPanelAt: showPnlAt });
     }
 
@@ -168,19 +171,19 @@ class TerminEvidentiraj extends Component {
         // medicalServicePanel = this.state.showPanelAt[0];
         medicalServicePanel =
             <div className={this.state.showPanelAt[0]}>
-                  <img src={pregled} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
-               <center> <h5 className="text-muted">Medical service</h5></center>  
+                <img src={pregled} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
+                <center> <h5 className="text-muted">Medical service</h5></center>
                 <div className="breadcrumb">
-                   
+
                     Pet *
                 <select className="form-control form-control-sm" ref={(ref) => this.Pacijent = ref}>
                         <option value="">choose pet</option>
                         {this.state.pacijenti.map(opt => { return (<option ref={(ref) => this.PacijentID = ref} key={opt._id} value={opt._id}>{opt.Ime}</option>); })}
                     </select>
-                    Type of medical service * 
+                    Type of medical service *
                 <select className="form-control form-control-sm" ref={(ref) => this.Usluga = ref}>
                         <option value="">choose type</option>
-                        {this.state.vrsteUsluge.map(opt => { return (<option  key={opt._id} value={opt._id}>{opt.Value}</option>); })}
+                        {this.state.vrsteUsluge.map(opt => { return (<option key={opt._id} value={opt._id}>{opt.Value}</option>); })}
                     </select>
                     Price *
                 <input className="form-control form-control-sm" ref={(ref) => this.Cijena = ref} placeholder="price (KM)" type="number" min="0" />
@@ -190,13 +193,13 @@ class TerminEvidentiraj extends Component {
         // diagnosisPanel = this.state.showPanelAt[1];
         diagnosisTherapyPanel =
             <div className={this.state.showPanelAt[1]}   >
-               
+
                 <img src={dijagnoza} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
-               <center> <h5 className="text-muted">Diagnosis and Therapy</h5></center> 
-               <div className="breadcrumb">  
+                <center> <h5 className="text-muted">Diagnosis and Therapy</h5></center>
+                <div className="breadcrumb">
                     Anamnesis/ Diagnosis Description
                 <textarea className="form-control form-control-sm" rows="5" ref={(ref) => this.Anamneza = ref} placeholder="anamnesis" type="text" />
-               Therapy
+                    Therapy
                 <input className="form-control form-control-sm" ref={(ref) => this.Terapija = ref} placeholder="herapy" type="text" />
                     Therapy Description
                 <textarea className="form-control form-control-sm" rows="3" ref={(ref) => this.OpisTer = ref} placeholder="description" type="text" />
@@ -205,14 +208,14 @@ class TerminEvidentiraj extends Component {
         // medicamentsPanel = this.state.showPanelAt[3];
         medicamentsPanel =
             <div className={this.state.showPanelAt[2]}>
-               <img src={lekovi} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
-               <center> <h5 className="text-muted">Medicaments</h5></center>  
+                <img src={lekovi} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
+                <center> <h5 className="text-muted">Medicaments</h5></center>
                 {this.state.showMedicamentErrorAlert === true ?
                     <div className="alert alert-dismissible alert-danger">
                         <strong>Oh snap!</strong> Diagnosis and Therapy are required, if you want to add Medicament!
                                     </div>
                     : ""}
-                <div className="breadcrumb">  
+                <div className="breadcrumb">
                     Medicament*
                 <input className="form-control form-control-sm" ref={(ref) => this.Lijek = ref} placeholder="txt" type="text" />
                     Quantity*
@@ -253,16 +256,16 @@ class TerminEvidentiraj extends Component {
                     </div>
                     :
                     <div>
-                <ul className="nav nav-tabs">
-                    <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 0)}><a className="nav-link active " data-toggle="tab" href="#home">Medical Service *</a></li>
-                    <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 1)}><a className="nav-link " data-toggle="tab" href="#profile">Diagnosis and Therapy </a></li>
-                    <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 2)}><a className="nav-link " data-toggle="tab" href="#profile">Medicaments</a></li>
-                </ul>
+                        <ul className="nav nav-tabs">
+                            <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 0)}><a className="nav-link active" data-toggle="tab" href="#jj" ref={(ref) => this.MedServiceTab = ref}>Medical Service *</a></li>
+                            <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 1)}><a className="nav-link" data-toggle="tab" href="#jj" ref={(ref) => this.DiagnosisTab = ref}>Diagnosis and Therapy </a></li>
+                            <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 2)}><a className="nav-link " data-toggle="tab" href="#jj" ref={(ref) => this.MedicamentsTab = ref}>Medicaments</a></li>
+                        </ul>
 
-{medicalServicePanel} 
- {diagnosisTherapyPanel}
+                        {medicalServicePanel}
+                        {diagnosisTherapyPanel}
 
- {medicamentsPanel}
+                        {medicamentsPanel}
 
                         <hr />
                         <button type="submit" className="btn btn-primary btn-block" onClick={this.spasiUslugu} >Save</button>

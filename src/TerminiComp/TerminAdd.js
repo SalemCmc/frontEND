@@ -12,7 +12,7 @@ class TerminAdd extends Component {
         super(props);
         let korID = this.props.idKlijent;
         this.state = {
-            Doktori: [], Korisnici: [], selectedKorisnik: "", selectedKorisnikID: korID, errorMsg: null, sati: [], timeMessage: null, selectedTime: null
+            Doktori: [], Korisnici: [], selectedKorisnik: "", selectedKorisnikID: korID, errorMsg: null, sati: [], timeMessage: null, selectedTime: null, disableSave: false
 
         };
 
@@ -28,25 +28,23 @@ class TerminAdd extends Component {
 
     }
     async getDoktori() {
-        let kor = await getKorisniciShort(' ', "Doktor");
+        let kor = await getKorisniciShort(' ', "Doctor");
         this.setState({ Doktori: kor });
-        // console.log("DOKTORI: ",kor);
     }
 
     async getKorisnici() {
-        //console.log("SEARCH STRINGO: ",this.SearchString.value);
-        if (this.SearchString.value.length > 1) {
-            let kor = await getKorisniciShort(this.SearchString.value, "Klijent");
-            this.setState({ Korisnici: kor });
-        }
+
+        // if (this.SearchString.value.length > 1) {
+        let kor = await getKorisniciShort(this.SearchString.value, "Client");
+        this.setState({ Korisnici: kor });
+        // }
     }
     selectKorisnik(id, naziv) {
         this.setState({ selectedKorisnikID: id, selectedKorisnik: naziv })
-        //console.log("this.state.selectedKorisnikID  je: ",this.state.selectedKorisnikID);
 
     }
     validiraj() {
-        // console.log("doktor www je: ",this.state.selectedKorisnikID);
+
         var valid = true;
         this.Doktor.className = this.Datum.className = "form-control form-control-sm";
         this.Time.className = "";
@@ -72,7 +70,8 @@ class TerminAdd extends Component {
 
         if ((day === 6) || (day === 0)) {
             //alert("Subotom i nedeljom ordinacija ne radi, odaberite drugi dan!");
-            this.setState({ errorMsg: "Subotom i nedeljom ordinacija ne radi, odaberite drugi dan!" });
+            this.setState({ errorMsg: "We don't work on weekends, please choose another day." });
+
             this.Datum.className = "form-control form-control-sm is-invalid"; valid = false;
         }
 
@@ -83,7 +82,7 @@ class TerminAdd extends Component {
 
         if (date1 < date2) {
             //alert("Datum mora biti veci ili današnji!");
-            this.setState({ errorMsg: "Datum mora biti veci ili današnji!" });
+            this.setState({ errorMsg: "You can't book in past, please choose valid date" });
             this.Datum.className = "form-control form-control-sm is-invalid"; valid = false;
         }
 
@@ -105,25 +104,22 @@ class TerminAdd extends Component {
         };
         let response = await PostTermin(newTermin);
         if (response !== true) {
-            // alert(response.error);
+
             this.setState({ errorMsg: response.error });
             return;
         }
-        // console.log("RESPONSE NA PL JE: ",response);
-        // alert("Uspjesno ste rezervisali termin!");
-        this.setState({ errorMsg: false });
-        //  this.props.refreshParent();
+
+        this.setState({ errorMsg: false, disableSave: true });
 
     }
     cleanErrorMsg() {
         this.setState({ errorMsg: null });
-        // ISTRAZITI : data-dismiss="alert" u buttonu
     }
     async  getFreeAppointmentTime() {
 
         if (this.Doktor.value !== "" && this.Datum.value.toString() !== "") {
 
-            let tm = <p>Prefered Time</p>;
+            let tm = <p>Available Time</p>;
 
             this.setState({ sati: null, timeMessage: tm, selectedTime: null });
             let doctorID = this.Doktor.value;
@@ -144,12 +140,13 @@ class TerminAdd extends Component {
         let customAlert = null;
         if (this.state.errorMsg !== null) {
             customAlert = <div className="alert alert-dismissible alert-danger">
-                <strong>PAŽNJA!</strong> <br /> {this.state.errorMsg}
+                <strong>Warning!</strong> <br /> {this.state.errorMsg}
             </div>
         }
         if (this.state.errorMsg === false) {
+
             customAlert = <div className="alert alert-dismissible alert-success">
-                <strong>Uspješno rezervisan termin!</strong>
+                <strong>Appointment saved successflly!</strong>
             </div>
         }
 
@@ -164,7 +161,7 @@ class TerminAdd extends Component {
                         <div className="col-sm-4">
                             Client
                             <input className="form-control form-control-sm" ref={(ref) => this.Korisnik = ref}
-                                defaultValue={this.state.selectedKorisnik} placeholder="You didn't chose client!" type="text" readOnly />
+                                defaultValue={this.state.selectedKorisnik} placeholder="You didn't choose client!" type="text" readOnly />
 
                             Search clients
                             <input className="form-control form-control-sm" ref={(ref) => this.SearchString = ref} placeholder="name or lastaname" type="text" onChange={this.getKorisnici} />
@@ -185,7 +182,7 @@ class TerminAdd extends Component {
 
                         Doctor
                         <select className="form-control form-control-sm" ref={(ref) => this.Doktor = ref} onChange={this.getFreeAppointmentTime}>
-                            <option value=""  >Izaberite doktora</option>
+                            <option value=""  >Choose doctor</option>
                             {this.state.Doktori.map(opt => { return (<option key={opt._id} ref={(ref) => this.DoktorID = ref} value={opt._id}>{opt.Ime + ' ' + opt.Prezime}</option>); })}
                         </select>
                         Date
@@ -214,7 +211,7 @@ class TerminAdd extends Component {
                     </div>
                 </div>
                 <hr />
-                <button type="submit" className="btn btn-primary btn-block" onClick={this.spasiTermin} >Save</button>
+                <button type="submit" className="btn btn-primary btn-block" onClick={this.spasiTermin} disabled={this.state.disableSave}  >Save</button>
 
             </div>
         );
