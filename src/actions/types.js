@@ -39,8 +39,12 @@ export const UPDATE_PET = 'UPDATE_PET';
 
 export const GET_CLIENT_SENDERS = 'GET_CLIENT_SENDERS';
 export const GET_EMPLOYEE_SENDERS = 'GET_EMPLOYEE_SENDERS';
-export const POST_MESSAGE = 'POST_MESSAGE';
-export const SET_SEEN = 'SET_SEEN';
-export const DELETE_MESSAGE = 'DELETE_MESSAGE';
+//export const SET_SEEN = 'SET_SEEN';
 export const MESSAGE_LOADING = 'MESSAGE_LOADING';
 export const GET_COUNT_NEW_MSG = 'GET_COUNT_NEW_MSG';
+export const GET_MESSAGES = 'GET_MESSAGES';
+
+
+
+export const POST_MESSAGE = 'POST_MESSAGE';
+export const DELETE_MESSAGE = 'DELETE_MESSAGE';

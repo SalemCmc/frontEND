@@ -3,11 +3,11 @@ import React, { Component } from 'react';
 import Messagetem from './Messagetem';
 
 import { getPoruke, PostPoruke, delleteMessage } from "../WebApis/requestsGraphQL.js";
-
+import Spinner from '../CommonComponents/Spinner'
 import { Link } from 'react-router-dom'
 // REDUX:
 import { connect } from 'react-redux';
-import { getMessageSenders, setSeen } from '../actions/messagesActions';
+import { getMessageSenders, setSeen, getMessages } from '../actions/messagesActions';
 
 
 
@@ -29,7 +29,7 @@ class MessagesPanel extends Component {
     this.loadMorePosiljaoci = this.loadMorePosiljaoci.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount() {  console.log("C MOUNT MESS: ", this.props.messages);
     if (this.props.messages.clients.length < 1) {
       this.getSenders();
     }
@@ -48,37 +48,53 @@ class MessagesPanel extends Component {
     this.SearchString.value = "";
 
     await this.props.getMessageSenders(searchParams);  // REDUX
+
   }
   async selectItem(id) {
 
-    let list = [];
-    if (this.state.rola === "Client") {
-      list = this.props.messages.clients;
-    }
-    else {
-      list = this.props.messages.employees;
-    }
-    let item = list.find((element) => { return element.SagovornikID === id })
-    if (item.Procitano === false) {
-      item.Procitano = true;
-      this.props.setSeen(id, this.props.auth.user.id)
-    }
-    this.setState({ selectedUser: item, rowPoruke: 0 });         // sta ovaj diop radi provjeri???
-    var por = await getPoruke(this.props.auth.user.id, id, 0);
-    this.setState({ poruke: por.reverse(), showMsgBlock: true });
-    this.Message.value = "";
+    // SET SEEN
+        let list = [];
+        if (this.state.rola === "Client") {
+          list = this.props.messages.clients;
+        }
+        else {
+          list = this.props.messages.employees;
+        }
+        let item = list.find((element) => { return element.SagovornikID === id })
+        if (item.Procitano === false) {
+          item.Procitano = true;
+          this.props.setSeen(id, this.props.auth.user.id)
+        }
+    // SET RIGHT PANEL (WITH MESSAGES AND SELECTED SENDER)
+        this.setState({ selectedUser: item, showMsgBlock: true });         // sta ovaj diop radi provjeri???
+       
+    // LOAD MESAGE LIST FOR SELECTED SENDER
+    
+      let messagesParams={};
+          messagesParams.currentUserID=this.props.auth.user.id;
+          messagesParams.senderID=id;
+          messagesParams.row=0;  // FIRST TIME CLICK!
+
+          await  this.props.getMessages(messagesParams);
+          this.Message.value = "";   
   }
 
 
   async loadMorePoruke() {
 
     if (this.state.selectedID === null) return;
-    let row = this.state.rowPoruke + 5;
-    let por = this.state.poruke;
-    let newPor = await getPoruke(this.props.auth.user.id, this.state.selectedUser.SagovornikID, row);
-    newPor = newPor.reverse();
-    let porMerg = newPor.concat(por);
-    this.setState({ poruke: porMerg, rowPoruke: row });
+/*     let row = this.state.rowPoruke + 5;
+    let por = this.state.poruke; */
+
+  
+      let messagesParams={};
+          messagesParams.currentUserID=this.props.auth.user.id;
+          messagesParams.senderID=this.state.selectedUser.SagovornikID;
+          messagesParams.row=this.props.messages.messagesList.length;
+
+    this.props.getMessages(messagesParams);
+
+
   }
 
   async loadMorePosiljaoci() {
@@ -165,6 +181,11 @@ class MessagesPanel extends Component {
 
           <div className="messagesearchelem2">
             <div className="messagesearchlist" ref={(el) => { this.messagesEnd = el; }} >
+              
+            {this.props.messages.sendersLoading === true ?
+          <Spinner size="50px" />
+          :""}
+              
               <table className="table-hover" style={{ width: "100%" }}>
                 <tbody>
                   {this.state.rola === "Client" ?
@@ -177,7 +198,7 @@ class MessagesPanel extends Component {
                     )}
                 </tbody>
               </table>
-
+            
             </div>
             <center><button float="center" type="button" className="btn btn-link" onClick={this.loadMorePosiljaoci} >load more...</button></center>
 
@@ -194,7 +215,11 @@ class MessagesPanel extends Component {
             </div>
 
             <div className="containermessage" >
-              {this.state.poruke.map((item, index) =>
+            
+            {this.props.messages.messagesLoading === true  ?
+               <Spinner size="30px" />
+          :""}
+              {this.props.messages.messagesList.map((item, index) =>
                 <div key={item._id} className="messagerow"
                   onMouseEnter={() => { this.hoverMsg(index) }} onMouseLeave={() => { this.hoverMsg(index) }}    >
 
@@ -232,5 +257,5 @@ const mapStateToProps = state => ({
   messages: state.messages
 });
 
-export default connect(mapStateToProps, { getMessageSenders, setSeen })(MessagesPanel);
+export default connect(mapStateToProps, { getMessageSenders, setSeen, getMessages })(MessagesPanel);
 
