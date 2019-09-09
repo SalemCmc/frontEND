@@ -4,17 +4,15 @@ import React, { Component } from 'react';
 import Header from './CommonComponents/Header';
 import Footer from './CommonComponents/Footer';
 import Home from './Home';
-import Obavjesti from './NotificationsComp/Obavjesti';
-import ObavjestiAdd from './NotificationsComp/ObavjestiAdd';
-import Korisnici from './KorisniciComp/Korisnici';
-import Login from './KorisniciComp/Login';
-import KorisniciDetails from './KorisniciComp/KorisniciDetails';
-import KorisniciAdd from './KorisniciComp/KorisniciAdd';
-import AdminPanel from './KorisniciComp/AdminPanel';
-import Usluge from './UslugeComp/Usluge';
-import KontaktiPanel from './Kontakti/KontaktiPanel';
+import Notifications from './NotificationsComp/Notifications';
+import UsersPanel from './UsersComp/UsersPanel';
+import Login from './UsersComp/Login';
+import UserDetails from './UsersComp/UserDetails';
+import UserAdd from './UsersComp/UserAdd';
+import AdminPanel from './UsersComp/AdminPanel';
+import KontaktiPanel from './ContactsComp/ContactsPanel';
 import Termini from './TerminiComp/Termini';
-import Poruke from './PorukeComp/Poruke';
+import MessagesPanel from './MessagesComp/MessagesPanel';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { setCurrentUser } from './actions/authActions';  //  , logoutUser  SET LOGGED USER FROM LOCAL STORAGE AND IMPORT TO STATE(STORE)
 import setAuthToken from './Utils/setAuthToken';
@@ -24,16 +22,6 @@ import PriceList from './PriceListComp/PriceList';
 
 import { Provider } from 'react-redux';
 import store from './store';
-//       npm update           --ako ima problema sa reduxom!
-//  <Route path="/Poruke" render={()=> (<Poruke />)} />
-
-//let user = { Username: "Doktor", Password: "Doktor" }
-//let user = { Username: "admin", Password: "admin" }
-//let user = { Username: "sara", Password: "sara" }
-
-
-
-//console.log("LS USER:  APP: ", localStorage.loggedUser);
 
 
 ///                      ---------------------------   GET LOGGED USER FROM LOCAL STORAGE AND IMPORT TO STATE(STORE)
@@ -63,7 +51,6 @@ class App extends Component {
 
 
   render() {
-    // console.log("okinut APP!");
 
     return (
       <Provider store={store}>
@@ -73,23 +60,18 @@ class App extends Component {
             <div className="custConteiner">
               <Route exact path="/" component={Home} />
               <Route path="/login" component={Login} />
-              <Route path="/Kontakti" render={() => (<KontaktiPanel />)} />
-              <Route path="/Obavjesti" component={Obavjesti} />
-              <Route path="/pricelist" component={PriceList} />
-              <Route path="/KorisniciAdd/:id" component={KorisniciAdd} permission="UsersADD" />
-              <Route path="/KorisniciDetails/:id" component={KorisniciDetails} permission="UserDETAILS" />
+              <Route path="/Contacts" render={() => (<KontaktiPanel />)} />
+              <Route path="/Notifications" component={Notifications} />
+              <Route path="/Pricelist" component={PriceList} />
+              <Route path="/UserAdd/:id" component={UserAdd} permission="UsersADD" />
+              <Route path="/UserDetails/:id" component={UserDetails} permission="UserDETAILS" />
               <Route path="/admin" component={AdminPanel} />
               <Switch>
-                <PrivateRoute exact path="/Poruke" component={Poruke} permission="Messages" />
+                <PrivateRoute exact path="/Messages" component={MessagesPanel} permission="Messages" />
               </Switch>
+
               <Switch>
-                <PrivateRoute exact path="/addObavjest" component={ObavjestiAdd} />
-              </Switch>
-              <Switch>
-                <PrivateRoute exact path="/Korisnici" component={Korisnici} permission="Users" />
-              </Switch>
-              <Switch>
-                <PrivateRoute exact path="/Usluge" component={Usluge} />
+                <PrivateRoute exact path="/UsersPanel" component={UsersPanel} permission="Users" />
               </Switch>
               <Switch>
                 <PrivateRoute exact path="/Termini" component={Termini} permission="Appointments" />

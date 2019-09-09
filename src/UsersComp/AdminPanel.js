@@ -1,9 +1,28 @@
 
 import React, { Component } from 'react';
-//import ReactDOM from 'react-dom';
-
 import { connect } from 'react-redux';
-import { getAllPermissions, getPermissionsByRole } from "../WebApis/requestsGraphQL.js";
+//import { getAllPermissions } from "../WebApis/requestsGraphQL.js";
+//, getPermissionsByRole
+
+
+
+
+///-----------------------------------------IN PROGRESS--------------------------------------------//
+///-----------------------------------------IN PROGRESS--------------------------------------------//
+///-----------------------------------------IN PROGRESS--------------------------------------------//
+///-----------------------------------------IN PROGRESS--------------------------------------------//
+///-----------------------------------------IN PROGRESS--------------------------------------------//
+///-----------------------------------------IN PROGRESS--------------------------------------------//
+
+
+
+
+
+
+
+
+///-----------------------------------------IN PROGRESS--------------------------------------------//
+///-----------------------------------------IN PROGRESS--------------------------------------------//
 
 
 class AdminPanel extends Component {
@@ -15,7 +34,7 @@ class AdminPanel extends Component {
   }
   async loadDetails() {
 
-    let res = await getAllPermissions();
+   /*  let res = await getAllPermissions();
     console.log("PERMISIJE IZ BAZU: ", res);
 
     let group = [];
@@ -24,24 +43,12 @@ class AdminPanel extends Component {
     })
 
     let Fgroup = Array.from(new Set(group));
-    this.setState({ permissionsList: res, group: Fgroup });
+    this.setState({ permissionsList: res, group: Fgroup }); */
 
 
 
 
 
-
-
-
-    console.log("GRUPEN state: ", this.state.group);
-
-
-
-
-
-
-    //let res1 = await getPermissionsByRole("5c8636171c9d440000d4af44");
-    // console.log("PERMISIJE IZ BAZU PO ROLI: ", res1);
   }
 
   render() {

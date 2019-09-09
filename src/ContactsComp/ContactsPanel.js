@@ -12,7 +12,7 @@ import { getContactsA } from '../actions/contactsActions';
 
 
 
-class KontaktiPanel extends Component {
+class ContactsPanel extends Component {
 
   static defaultProps = {
     center: {
@@ -64,13 +64,13 @@ class KontaktiPanel extends Component {
     );
   }
 }
-//export default KontaktiPanel;
+//export default ContactsPanel;
 
 // REDUX:
 const mapStateToProps = state => ({
   contacts: state.contacts
 });
-export default connect(mapStateToProps, { getContactsA })(KontaktiPanel);
+export default connect(mapStateToProps, { getContactsA })(ContactsPanel);
 
 
 

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom'
 
 // Api's functions:
-import { getPetByOwnerID, deactivatePet } from "../WebApis/requestsGraphQL.js";
+//import {  deactivatePet } from "../WebApis/requestsGraphQL.js";
 
 // child components:
 import Spinner from '../CommonComponents/Spinner'
@@ -12,18 +12,19 @@ import Pagination from "react-js-pagination";
 import PetAdd from './PetAdd';
 import PetDetail from './PetDetail';
 import Modal from '../CommonComponents/Modal';
-//import avatarDefault from '../CommonComponents/avatarDefault.jpg'
-//import UploadPhoto from '../CommonComponents/UploadPhoto';
+
+// REDUX:
+import { connect } from 'react-redux';
+import { getPetsByUserID, deactivatePet } from '../actions/petsActions';
 
 class Pets extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      Pets: [], row: 0, limit: 3, showSuccessAlert: false, showErrorAlert: false, alertMessage: "",
-      showModal: false, modalTitle: "", modalChild: null, selectedPetID: null, loading: true
+      row: 0, limit: 3, showSuccessAlert: false, showErrorAlert: false, alertMessage: "",
+      showModal: false, modalTitle: "", modalChild: null, selectedPetID: null
     };
 
-    //  this.setPhotoUrl = this.setPhotoUrl.bind(this);
     this.loadPets = this.loadPets.bind(this);
     this.handleModal = this.handleModal.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
@@ -31,26 +32,33 @@ class Pets extends Component {
     this.addNewPetModal = this.addNewPetModal.bind(this);
     this.removePet = this.removePet.bind(this);
     this.detailPetModal = this.detailPetModal.bind(this);
-    this.loadPets();
+    
   }
+
+  componentDidMount() 
+  {
+        if(this.props.pets.searchParams !== {} && this.props.pets.searchParams.userID!==this.props.VlasnikID )
+        {
+          this.setState({ row: 0, pn: 1 });
+          this.loadPets();
+        }
+  }
+
   async handlePageChange(pageNumber) {
     let br = (pageNumber - 1) * this.state.limit;
-    //console.log(br);
     await this.setState({ row: br, pn: pageNumber });
     this.loadPets();
   }
   handleModal = () => {
     this.setState({ showModal: !this.state.showModal });
-    // console.log("this.state.showModal: ", this.state.showModal);
-    //this.loadPets();
   };
   async loadPets() {
-    // this.setState({ loading: true });
-    getPetByOwnerID(this.props.VlasnikID, this.state.row, this.state.limit)
-      .then(result => {
-        this.setState({ Pets: result.items, countPets: result.count, loading: false });
-
-      })
+                    let searchParams={};
+                        searchParams.userID=this.props.VlasnikID;
+                        searchParams.row=this.state.row;
+                        searchParams.limit=this.state.limit;
+                        searchParams.pageNumber = this.state.pn;
+                    await this.props.getPetsByUserID(searchParams);  // REDUX
   }
 
   removePetModal(ID) {
@@ -59,7 +67,7 @@ class Pets extends Component {
     this.setState({ showModal: !this.state.showModal, modalChild: modChld, modalTitle: "Confirm Deletion!", selectedPetID: ID });
   }
   async removePet() {
-    await deactivatePet(this.state.selectedPetID);
+    await this.props.deactivatePet(this.state.selectedPetID);
     this.handleModal();
     this.loadPets();
   }
@@ -77,23 +85,22 @@ class Pets extends Component {
 
   render() {
     return (<div>
-      {this.state.loading === true ?
+      {this.props.pets.loading === true ?
         <Spinner />
         :
         <div className="">
 
           <div className="custtitleboxpets">
-            {this.state.Pets.length > 0 ? <h4 >Pets</h4> : <h4 className="text-danger">This user doesn't own any pet!</h4>}
+            {this.props.pets.count>0 ? <h4 >Pets</h4> : <h4 className="text-danger">This user doesn't own any pet!</h4>}
             <Link to="#" onClick={this.addNewPetModal} >Add pet</Link>
           </div>
 
           <Modal show={this.state.showModal} handleClose={this.handleModal} title={this.state.modalTitle} >
-
-            {this.state.modalChild}
+                   {this.state.modalChild}
           </Modal>
 
           <div className="col-container">
-            {this.state.Pets.filter(i => i.Aktivan === true).map((item, index) =>
+            {this.props.pets.items.map((item, index) =>
               <div className="custcard" key={index}>
                 <div className="cardphoto">
                   <img src={item.Slika} alt="John" style={{ height: "100%", width: "100%", borderTopLeftRadius: '0.25rem', borderTopRightRadius: '0.25rem' }} />
@@ -112,11 +119,11 @@ class Pets extends Component {
             )}
           </div>
 
-          {this.state.countPets > this.state.limit ?
+          {this.props.pets.count > this.state.limit ?
 
             <div className="custpaging">
-              <Pagination activePage={this.state.pn} itemsCountPerPage={3} onChange={this.handlePageChange}
-                totalItemsCount={this.state.countPets} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
+              <Pagination activePage={this.props.pets.searchParams.pageNumber} itemsCountPerPage={3} onChange={this.handlePageChange}
+                totalItemsCount={this.props.pets.count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
                 linkClass="" activeLinkClass="" activeClass="page-item active" disabledClass="text-secondary" firstPageText="first" lastPageText="last" nextPageText=">" prevPageText="<"
               />
             </div>
@@ -127,5 +134,10 @@ class Pets extends Component {
     );
   }
 }
-
-export default Pets;
+//export default Pets;
+// REDUX:
+const mapStateToProps = state => ({
+  pets: state.pets,
+  errors: state.errors
+});
+export default connect(mapStateToProps, { getPetsByUserID, deactivatePet })(Pets);

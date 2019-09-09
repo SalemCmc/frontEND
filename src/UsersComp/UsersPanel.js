@@ -13,7 +13,7 @@ import { getUsers } from '../actions/usersActions';
 
 //import { getKorisnici } from "../WebApis/requestsGraphQL.js";
 
-class Korisnici extends Component {
+class UsersPanel extends Component {
   constructor(props) {
     super(props);
     this.state = { KorisniciList: [], Count: 0, rola: "Client", row: 0, aktivni: true, limit: 4, searchString: " ", pn: 1 };
@@ -80,7 +80,7 @@ class Korisnici extends Component {
         <div className="custtitlebox">
           <Search search={this.search} searchParams={this.props.users.searchParams} sstring="true" sdate="false" scheck="true" sradio="true" />
           <h4 >Clients and Employees</h4>
-          <Link to="/KorisniciAdd/registration">Add new user</Link>
+          <Link to="/UserAdd/registration">Add new user</Link>
         </div>
 
 
@@ -110,8 +110,8 @@ class Korisnici extends Component {
               <hr />
 
               <div className="btn-group" role="group" aria-label="Basic example">
-                <Link to={`/KorisniciAdd/${item._id}`}><h6>Edit </h6></Link> &nbsp; &nbsp; &nbsp;
-                <Link to={`/KorisniciDetails/${item._id}`}><h6>Details </h6></Link>
+                <Link to={`/UserAdd/${item._id}`}><h6>Edit </h6></Link> &nbsp; &nbsp; &nbsp;
+                <Link to={`/UserDetails/${item._id}`}><h6>Details </h6></Link>
               </div>
             </div>
 
@@ -128,11 +128,11 @@ class Korisnici extends Component {
     );
   }
 }
-//export default Korisnici;
+//export default UsersPanel;
 
 // REDUX:
 const mapStateToProps = state => ({
   users: state.users,
   errors: state.errors
 });
-export default connect(mapStateToProps, { getUsers })(Korisnici);
+export default connect(mapStateToProps, { getUsers })(UsersPanel);

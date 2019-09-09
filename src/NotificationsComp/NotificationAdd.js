@@ -1,11 +1,8 @@
 import React, { Component } from "react";
-//import { saveObavjest } from "../WebApi";
-//import { Link } from "react-router-dom";
 import { connect } from 'react-redux';
 import { addNotification } from '../actions/notificationActions';
-//import { addObavjest } from "../WebApis/requestsGraphQL.js";
 
-class ObavjestiAdd extends Component {
+class NotificationAdd extends Component {
   constructor(props) {
     super(props);
     this.state = { showSuccessAlert: false, showErrorAlert: false, alertMessage: "" };
@@ -25,16 +22,9 @@ class ObavjestiAdd extends Component {
       Aktivno: true
     };
 
-   // addObavjest(obavjest);
     this.props.addNotification(obavjest);
     this.content.value = this.title.value = "";
     this.setState({ showErrorAlert: false, showSuccessAlert: true, alertMessage: "You successfully save data." });
-    //alert("Uspjesno izvrseno spasavanje nove obavjesti!");
-    //redirect na obavjesti:
-
-    // this.props.history.push('/Obavjesti');
-
-
   }
   validiraj() {
     let valid = true;
@@ -56,7 +46,6 @@ class ObavjestiAdd extends Component {
     return (
 
       <div className="">
-
         {this.state.showSuccessAlert === true ?
           <div className="alert alert-dismissible alert-success">
             <strong>Well done!</strong> {this.state.alertMessage}
@@ -68,23 +57,19 @@ class ObavjestiAdd extends Component {
           </div>
           : ""}
 
-
         Title  <input className="form-control form-control-sm" ref={ref => (this.title = ref)} placeholder="" type="text" />
         Content  <textarea className="form-control" placeholder="" rows="10" ref={ref => (this.content = ref)} />
         <br />
 
         <button className="btn btn-primary btn-block" onClick={this.save}>Save </button>
       </div>
-
-
     );
   }
 }
-
 //export default ObavjestiAdd;
-
+// REDUX:
 const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, {addNotification})(ObavjestiAdd);
+export default connect(mapStateToProps, {addNotification})(NotificationAdd);

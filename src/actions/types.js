@@ -31,3 +31,16 @@ export const GET_USER = 'GET_USER';
 export const USERS_LOADING = 'USERS_LOADING';
 export const UPDATE_USER = 'UPDATE_USER';
 export const LOGIN_LOADING = 'LOGIN_LOADING';
+// pets
+export const GET_PETS = 'GET_PETS';
+export const PETS_LOADING = 'PETS_LOADING';
+export const UPDATE_PET = 'UPDATE_PET';
+//messages
+
+export const GET_CLIENT_SENDERS = 'GET_CLIENT_SENDERS';
+export const GET_EMPLOYEE_SENDERS = 'GET_EMPLOYEE_SENDERS';
+export const POST_MESSAGE = 'POST_MESSAGE';
+export const SET_SEEN = 'SET_SEEN';
+export const DELETE_MESSAGE = 'DELETE_MESSAGE';
+export const MESSAGE_LOADING = 'MESSAGE_LOADING';
+export const GET_COUNT_NEW_MSG = 'GET_COUNT_NEW_MSG';

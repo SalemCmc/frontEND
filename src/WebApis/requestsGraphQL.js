@@ -303,9 +303,10 @@ export async function postPet(input) {
                                 updatePet(input: $input) {_id Ime errorMsg errorStatus}
                               }`;
   let resp = await graphqlRequest(mutation, { input });
+  console.log("-----------SAVE PET API", resp);
   return resp.updatePet;
 }
-export async function deactivatePet(id) {
+export async function deactivatePetG(id) {
   const mutation = `mutation deactPet($id: ID!)
                               {
                                 deactivatePet(id: $id) 
@@ -370,7 +371,7 @@ export async function getPosiljaociPoruka(ID1, role, row, searchString, limit) {
                       {ID Message Datum SagovornikID Sagovornik SagovornikAvatar Procitano
                       }}`;
   let input = { ID1, searchString, role, row, limit }
-  console.log("input:::::", input);
+
   let resp = await graphqlRequest(query, { input });
   return resp.getPosiljaociPoruka;
 

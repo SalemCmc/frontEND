@@ -27,7 +27,7 @@ class Header extends Component {
         <li className="nav-item dropdown show">
           <a className="nav-link dropdown-toggle" data-toggle="dropdown" href="0" role="button" aria-haspopup="false" aria-expanded="false">{this.props.auth.user.userName} &nbsp;</a>
           <div className="dropdown-menu" x-placement="bottom-start">
-            <a className="dropdown-item" href={"/KorisniciDetails/" + this.props.auth.user.id}><span role="img" aria-label=""> &#9998; &nbsp; &nbsp;</span> My profile</a>
+            <a className="dropdown-item" href={"/UserDetails/" + this.props.auth.user.id}><span role="img" aria-label=""> &#9998; &nbsp; &nbsp;</span> My profile</a>
             <Link className="dropdown-item" to={"/"} onClick={(e) => this.onLogoutClick(e)}>  <span role="img" aria-label=""> &#128273;&nbsp; &nbsp;Log Out</span>    </Link>
           </div>
         </li>
@@ -48,17 +48,17 @@ class Header extends Component {
       }
       // users:
       if (this.props.auth.userPermisions.includes("Users")) {
-        usersTag = <li className="nav-item"><Link className="nav-link" to="/Korisnici">Clients/Users</Link></li>;
+        usersTag = <li className="nav-item"><Link className="nav-link" to="/UsersPanel">Clients/Users</Link></li>;
       }
       // messages:
       if (this.props.auth.userPermisions.includes("Messages")) {
-        messagesTag = <li className="nav-item"><Link className="nav-link" to="/Poruke">Messages</Link></li>;
+        messagesTag = <li className="nav-item"><Link className="nav-link" to="/Messages">Messages</Link></li>;
       }
     }
     else {
       authenticatedTag = <ul className="navbar-nav">
         <li className="nav-item"> <Link className="nav-link" to="/login">Login</Link></li>
-        <li className="nav-item"><Link className="nav-link" to="/KorisniciAdd/registration">Registration</Link> </li>
+        <li className="nav-item"><Link className="nav-link" to="/UserAdd/registration">Registration</Link> </li>
       </ul>;
     }
 
@@ -76,13 +76,13 @@ class Header extends Component {
 
               {appointmentsTag}{servicesTag}{usersTag}{messagesTag}
               <li className="nav-item">
-                <Link className="nav-link" to="/Obavjesti">Notifications</Link>
+                <Link className="nav-link" to="/Notifications">Notifications</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/Kontakti">Contacts</Link>
+                <Link className="nav-link" to="/Contacts">Contacts</Link>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/pricelist">Price list</Link>
+                <Link className="nav-link" to="/Pricelist">Price list</Link>
               </li>
             </ul>
             {authenticatedTag}

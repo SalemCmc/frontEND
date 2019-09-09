@@ -70,7 +70,7 @@ class TerminAdd extends Component {
 
         if ((day === 6) || (day === 0)) {
             //alert("Subotom i nedeljom ordinacija ne radi, odaberite drugi dan!");
-            this.setState({ errorMsg: "We don't work on weekends, please choose another day." });
+            this.setState({ errorMsg: "We don't work at weekends, please choose another day." });
 
             this.Datum.className = "form-control form-control-sm is-invalid"; valid = false;
         }

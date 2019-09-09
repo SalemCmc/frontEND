@@ -16,7 +16,7 @@ export const getNotifications = searchParams => async dispatch => {
 
     await getObavjestiGR(searchParams.searchString, searchParams.searchDate, searchParams.row, searchParams.limit)
         .then(response => {
-            console.log("RESPONSE: ", response);
+            
             dispatch({
                 type: GET_NOTIFICATIONS,
                 payload: response.items,
@@ -46,7 +46,7 @@ export const deleteNotification = ID => async dispatch => {
 export const addNotification = newNotification => async dispatch => {
 
     await addObavjest(newNotification);
-    //dispatch(getNotifications(store.getState().notifications.searchParams));
+    
     dispatch(resetSearch());
     dispatch(getNotifications({ searchString: "", searchDate: "", row: 0, limit: 4, pageNumber: 1 }));
 };

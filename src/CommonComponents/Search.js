@@ -8,7 +8,7 @@ class Search extends Component {
 
   }
   componentDidMount() {
-    console.log("SEARCH COMP params: ", this.props.searchParams);
+  
     let params = this.props.searchParams;
     if (params !== undefined) {
 

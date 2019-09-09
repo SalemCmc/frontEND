@@ -2,16 +2,13 @@
 import React, { Component } from 'react';
 
 
-class PorukaItem extends Component {
+class Messagetem extends Component {
   constructor(props) {
     super(props);
-    this.state = { class: "", };  // ne trebAAA
+    this.state = { class: "", }; 
     this.clickItem = this.clickItem.bind(this);
-
-
   }
   clickItem() {
-    // console.log("KLIKNUTI ITEM JE:", this.props.itemShow.KorisnikID );
     this.props.selectItem(this.props.itemShow.SagovornikID);
   }
   getClass() {
@@ -24,12 +21,11 @@ class PorukaItem extends Component {
 
 
   render() {
-    //console.log("ITEm:", this.props.itemShow);
+  
     return (
-
       <div className={this.getClass()} onClick={this.clickItem}    >
 
-<div className="form-inline"  >
+           <div className="form-inline"  >
               <div className="right"><img src={this.props.itemShow.SagovornikAvatar} className="avatarchat" alt="slika" /></div>
 
               <div className="right" >
@@ -48,4 +44,4 @@ class PorukaItem extends Component {
   }
 }
 
-export default PorukaItem;
+export default Messagetem;

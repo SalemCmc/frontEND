@@ -7,7 +7,8 @@ import contactsReducer from './contactsReducer';
 import notificationsReducer from './notificationsReducer';
 import errorReducer from './errorReducer';
 import usersReducer from './usersReducer';
-// import postReducer from './postReducer';
+import petsReducer from './petsReducer';
+import messagesReducer from './messagesReducer';
 
 export default combineReducers({
   auth: authReducer,
@@ -15,7 +16,10 @@ export default combineReducers({
   contacts: contactsReducer,
   notifications: notificationsReducer,
   errors: errorReducer,
-  users: usersReducer
+  users: usersReducer,
+  pets: petsReducer,
+  messages:messagesReducer
+  
   // profile: profileReducer,
   // post: postReducer
 });

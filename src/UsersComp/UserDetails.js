@@ -10,7 +10,7 @@ import { Link } from 'react-router-dom'
 //REDUX:
 import { connect } from 'react-redux';
 
-class KorisniciDetails extends Component {
+class UserDetails extends Component {
   constructor(props) {
     super(props);
     this.state = { Korisnik: {}, timeLineList: [], timelineRow: 0, pets: { items: [] }, petRow: 0, showModal: false, modalTitle: "", statisctics: {} ,showPets:false};
@@ -139,7 +139,7 @@ console.log("state: ",this.state.showPets);
               </p>
               <hr />
 
-              <Link className="btn btn-outline-secondary btn-block" to={"/KorisniciAdd/" + this.state.Korisnik._id}>EDIT</Link>
+              <Link className="btn btn-outline-secondary btn-block" to={"/UserAdd/" + this.state.Korisnik._id}>EDIT</Link>
             </div>
           </div>
         </div>
@@ -198,21 +198,15 @@ console.log("state: ",this.state.showPets);
             <p className="custarrow right" onClick={() => { this.loadPets("NEXT") }}    >&#10095;</p>
           </div>
           }
-
-
-
-
         </div>
       </div>
     );
   }
 }
-
-//export default KorisniciDetails;
-
+//export default UserDetails;
+// REDUX:
 const mapStateToProps = state => ({
   auth: state.auth
-
 });
 
-export default connect(mapStateToProps)(KorisniciDetails);
+export default connect(mapStateToProps)(UserDetails);

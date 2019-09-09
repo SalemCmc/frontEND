@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 // sub component
-import ObavjestiAdd from "./ObavjestiAdd";
+import NotificationAdd from "./NotificationAdd";
 // common components:
 import Spinner from '../CommonComponents/Spinner'
 import Error from '../CommonComponents/Error'
@@ -17,7 +17,7 @@ import { getNotifications, deleteNotification } from '../actions/notificationAct
 
 
 
-class Obavjesti extends Component {
+class Notifications extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,11 +38,11 @@ class Obavjesti extends Component {
   }
 
 
-  componentDidMount()  // potrebno jer kad se radi redirect da se reload-a komponenta.
+  componentDidMount() 
   {
-    console.log("na formi obavesti: ", this.props.notifications);
+ 
     if (this.props.history.action === "POP" && this.props.notifications.items.length > 0 && this.props.notifications.searchParams !== {}) {
-      //  console.log(" B A C K!"); // do nothing!
+      //  console.log(" B A C K!"); // do nothing!  FIX LATER...
     }
     else {
       // console.log("NOT B A C K!");
@@ -54,7 +54,7 @@ class Obavjesti extends Component {
   }
 
 
-  async searchObavjest(sstring, sdate)// poziva se iz komponente search i vraca 2 param!
+  async searchObavjest(sstring, sdate)
   {
     await this.setState({ searchString: sstring, searchDate: sdate, row: 0, pn: 1 });
     this.getObavjest();
@@ -67,7 +67,7 @@ class Obavjesti extends Component {
     searchParam.row = this.state.row;
     searchParam.limit = this.state.limit;
     searchParam.pageNumber = this.state.pn;
-    console.log("searchParam: ", searchParam);
+   
     await this.props.getNotifications(searchParam);  // load from DB and insert in the store (redux)
 
   }
@@ -85,7 +85,7 @@ class Obavjesti extends Component {
     await this.setState({ showModal: !this.state.showModal });
   }
   addNewItemtModal() {
-    let childModal = <ObavjestiAdd />
+    let childModal = <NotificationAdd />
     this.setState({ showModal: !this.state.showModal, modalTitle: "Add Notification", modalChild: childModal });
 
   }
@@ -95,13 +95,11 @@ class Obavjesti extends Component {
   }
 
   render() {
-    //  console.log("na formi RENDER:------------------- ", this.props.errors.errorMessage);
-
+ 
 
     return (
 
       <div className="">
-
 
         <Modal show={this.state.showModal} handleClose={this.handleModal} title={this.state.modalTitle} >
           {this.state.modalChild}
@@ -161,11 +159,11 @@ class Obavjesti extends Component {
   }
 }
 
-//export default Obavjesti;
+//export default Notifications;
 const mapStateToProps = state => ({
   auth: state.auth,
   notifications: state.notifications,
   errors: state.errors
 });
 
-export default connect(mapStateToProps, { getNotifications, deleteNotification })(Obavjesti);
+export default connect(mapStateToProps, { getNotifications, deleteNotification })(Notifications);

@@ -11,7 +11,7 @@ import { getUserByID, updateUser } from '../actions/usersActions';
 
 import { getCommonApi } from "../WebApis/requestsGraphQL.js";
 
-class KorisniciAdd extends Component {
+class UserAdd extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -476,11 +476,11 @@ class KorisniciAdd extends Component {
   }
 }
 
-//  export default KorisniciAdd;
+//  export default UserAdd;
 const mapStateToProps = state => ({
   auth: state.auth,
   users: state.users,
   userUpdate: state.users.userUpdate
 });
 
-export default connect(mapStateToProps, { getUserByID, updateUser })(KorisniciAdd);
+export default connect(mapStateToProps, { getUserByID, updateUser })(UserAdd);

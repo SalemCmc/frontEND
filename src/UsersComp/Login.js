@@ -2,7 +2,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { loginUser } from '../actions/authActions';
-import Error from '../CommonComponents/Error'
+//import Error from '../CommonComponents/Error'
 import Spinner from '../CommonComponents/Spinner'
 
 
@@ -23,7 +23,7 @@ class Login extends Component {
       {
         this.props.history.push('/Termini');
       }
-      else { this.props.history.push('/Obavjesti'); }
+      else { this.props.history.push('/Notifications'); }
 
     }
   }
@@ -69,7 +69,25 @@ class Login extends Component {
             </div>
             : null}
 
-          <br /> <h4>Log in</h4><br /> <br />
+           <h4>Log in</h4>
+          <div className="alert alert-dismissible alert-warning">
+          If you want to log in in this app, please use one of below accounts
+          <hr />
+             <div className="left"><strong>Role DOCTOR:</strong>
+              <br />username: Doktor
+              <br />password: Doktor
+              </div> 
+              <div>
+                    <strong>Role CLIENT:</strong>
+              <br />username: sara
+              <br />password: sara
+              </div>
+              <hr />
+          
+           
+              <strong>IMPORTANT:  First logIn can take 10 to 15 seconds (Heroku web server need time to wake up!)</strong>
+            </div>
+
 
           <div className="col-sm-5">
             <input className="form-control form-control-sm" ref={(ref) => this.username = ref} name="username" placeholder="Username" type="text" />

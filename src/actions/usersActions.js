@@ -2,7 +2,7 @@
 
 import { GET_USERS, GET_USER, UPDATE_USER, GET_ERRORS, USERS_LOADING, CLEAR_ERRORS } from './types';
 import { getUsersG } from "../WebApis/requestsGraphQL.js";
-import { getUserByIDG, updateKorisnik,updateUserG, getCommonApi } from "../WebApis/requestsGraphQL.js";
+import { getUserByIDG, updateUserG } from "../WebApis/requestsGraphQL.js";
 
 
 export const getUsers = searchParams => async dispatch => {
@@ -66,7 +66,6 @@ export const updateUser = user => async dispatch => {
 
     await updateUserG(user)
         .then(response => {
-             console.log("RESPONSE U AKCIJI: ", response);
             dispatch({
                 type: UPDATE_USER,
                 payload: response
