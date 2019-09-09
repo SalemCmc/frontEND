@@ -5,17 +5,17 @@ import React, { Component } from 'react';
 import { getTerminiByKlijent, ukloniTermin } from "../WebApis/requestsGraphQL.js";
 import { connect } from 'react-redux';
 import { loginUser } from '../actions/authActions';
-import TerminAdd from './TerminAdd';
+import AppointmentAdd from './AppointmentAdd';
 import Modal from '../CommonComponents/Modal';
 import Pagination from "react-js-pagination";
-import TerminDetails from './TerminDetails';
+import AppointmentDetails from './AppointmentDetails';
 import Spinner from '../CommonComponents/Spinner'
 import { Link } from 'react-router-dom'
 import Confirm from "../CommonComponents/Confirm"
 
 
 
-class TerminiKlijent extends Component {
+class AppointmentPanelClient extends Component {
   constructor(props) {
     super(props);
     this.state = { TerminiList: [], row: 0, limit: 6, Count: 0, showModal: false, modalTitle: "" };
@@ -91,8 +91,8 @@ class TerminiKlijent extends Component {
     console.log("STATE: ", this.state);
     let childComponent = null;
 
-    if (this.state.action === "INFO") { childComponent = <TerminDetails id={this.state.idTermin} />; }
-    if (this.state.action === "REZERVISI") { childComponent = <TerminAdd refreshParent={this.loadTermini} idKlijent={this.props.auth.user.id} />; }
+    if (this.state.action === "INFO") { childComponent = <AppointmentDetails id={this.state.idTermin} />; }
+    if (this.state.action === "REZERVISI") { childComponent = <AppointmentAdd refreshParent={this.loadTermini} idKlijent={this.props.auth.user.id} />; }
     if (this.state.action === "UKLONI") { childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>; }
     return (
       <div className="" >
@@ -165,4 +165,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps, { loginUser })(TerminiKlijent);
+export default connect(mapStateToProps, { loginUser })(AppointmentPanelClient);

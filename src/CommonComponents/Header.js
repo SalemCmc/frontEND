@@ -36,10 +36,10 @@ class Header extends Component {
       //  APOINTMENTS:
       if (this.props.auth.userPermisions.includes("Appointments")) {
         if (this.props.auth.user.rola === "Doctor") {
-          appointmentsTag = <li className="nav-item"><Link className="nav-link" to="/Termini">Appointments</Link></li>
+          appointmentsTag = <li className="nav-item"><Link className="nav-link" to="/Appointments">Appointments</Link></li>
         }
         else {
-          appointmentsTag = <li className="nav-item"><Link className="nav-link" to="/Termini">My appointments</Link></li>
+          appointmentsTag = <li className="nav-item"><Link className="nav-link" to="/Appointments">My appointments</Link></li>
         }
       }
       // SERVICES:

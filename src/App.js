@@ -11,7 +11,7 @@ import UserDetails from './UsersComp/UserDetails';
 import UserAdd from './UsersComp/UserAdd';
 import AdminPanel from './UsersComp/AdminPanel';
 import KontaktiPanel from './ContactsComp/ContactsPanel';
-import Termini from './TerminiComp/Termini';
+import Appointments from './AppointmentsComp/Appointments';
 import MessagesPanel from './MessagesComp/MessagesPanel';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { setCurrentUser } from './actions/authActions';  //  , logoutUser  SET LOGGED USER FROM LOCAL STORAGE AND IMPORT TO STATE(STORE)
@@ -74,7 +74,7 @@ class App extends Component {
                 <PrivateRoute exact path="/UsersPanel" component={UsersPanel} permission="Users" />
               </Switch>
               <Switch>
-                <PrivateRoute exact path="/Termini" component={Termini} permission="Appointments" />
+                <PrivateRoute exact path="/Appointments" component={Appointments} permission="Appointments" />
               </Switch>
             </div>
             <Footer />

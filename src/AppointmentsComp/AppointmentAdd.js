@@ -7,7 +7,7 @@ import Spinner from '../CommonComponents/Spinner'
 
 
 
-class TerminAdd extends Component {
+class AppointmentAdd extends Component {
     constructor(props) {
         super(props);
         let korID = this.props.idKlijent;
@@ -218,4 +218,4 @@ class TerminAdd extends Component {
     }
 }
 
-export default TerminAdd;
+export default AppointmentAdd;

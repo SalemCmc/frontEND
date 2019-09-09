@@ -5,7 +5,7 @@ import avatarDefault from '../CommonComponents/avatarDefault.jpg'
 import { getDayName, getDateString } from '../Utils/DateUtils';
 import Modal from '../CommonComponents/Modal';
 import PetDetail from '../PetsComp/PetDetail';
-import TerminDetails from '../TerminiComp/TerminDetails';
+import AppointmentDetails from '../AppointmentsComp/AppointmentDetails';
 import { Link } from 'react-router-dom'
 //REDUX:
 import { connect } from 'react-redux';
@@ -13,7 +13,7 @@ import { connect } from 'react-redux';
 class UserDetails extends Component {
   constructor(props) {
     super(props);
-    this.state = { Korisnik: {}, timeLineList: [], timelineRow: 0, pets: { items: [] }, petRow: 0, showModal: false, modalTitle: "", statisctics: {} ,showPets:false};
+    this.state = { Korisnik: {}, timeLineList: [], timelineRow: 0, pets: { items: [] }, petRow: 0, showModal: false, modalTitle: "", statisctics: {}, showPets: false };
     this.loadDetails = this.loadDetails.bind(this);
     this.handleModal = this.handleModal.bind(this);
     this.loadTimeline = this.loadTimeline.bind(this);
@@ -25,7 +25,7 @@ class UserDetails extends Component {
     let childComp = "";
     let modTitle = "";
     if (action === "TIMELINEDETAIL") {
-      childComp = <TerminDetails id={id} />;
+      childComp = <AppointmentDetails id={id} />;
       modTitle = "Appointment Details";
     }
     else {
@@ -50,14 +50,13 @@ class UserDetails extends Component {
           K.Slika = avatarDefault;
         }
       }
- 
-      let showPets1=true;
-      if(this.props.auth.user.id===K._id && this.props.auth.user.rola==="Doctor")
-      {
-         showPets1=false;
+
+      let showPets1 = true;
+      if (this.props.auth.user.id === K._id && this.props.auth.user.rola === "Doctor") {
+        showPets1 = false;
       }
-      
-       this.setState({ Korisnik: K, slikaURL: K.Slika , showPets:showPets1});
+
+      this.setState({ Korisnik: K, slikaURL: K.Slika, showPets: showPets1 });
 
     })
   }
@@ -83,7 +82,7 @@ class UserDetails extends Component {
   }
 
   render() {
-console.log("state: ",this.state.showPets);
+    console.log("state: ", this.state.showPets);
 
     return (
       <div className="" >
@@ -184,19 +183,19 @@ console.log("state: ",this.state.showPets);
           </div>
 
 
-          
-          {this.state.showPets===false ? "" :
-          <div className="petpnl">
-            <center> <h5 className="text-muted">Pets</h5></center> <hr />
-            <p className="custarrow" style={{ float: "left" }} onClick={() => { this.loadPets("PREV") }}   >&#10094;</p>
-            {this.state.pets.items.map((item) =>
-              <div key={item._id} className="petitemdetails" >
-                <center>     <img className="petitemimage" src={item.Slika} alt="photoUser" onClick={() => { this.handleModal("PETEDETAIL", item._id) }} />
-                  <h5 className="text-muted">{item.Ime} </h5>  </center>
-              </div>
-            )}
-            <p className="custarrow right" onClick={() => { this.loadPets("NEXT") }}    >&#10095;</p>
-          </div>
+
+          {this.state.showPets === false ? "" :
+            <div className="petpnl">
+              <center> <h5 className="text-muted">Pets</h5></center> <hr />
+              <p className="custarrow" style={{ float: "left" }} onClick={() => { this.loadPets("PREV") }}   >&#10094;</p>
+              {this.state.pets.items.map((item) =>
+                <div key={item._id} className="petitemdetails" >
+                  <center>     <img className="petitemimage" src={item.Slika} alt="photoUser" onClick={() => { this.handleModal("PETEDETAIL", item._id) }} />
+                    <h5 className="text-muted">{item.Ime} </h5>  </center>
+                </div>
+              )}
+              <p className="custarrow right" onClick={() => { this.loadPets("NEXT") }}    >&#10095;</p>
+            </div>
           }
         </div>
       </div>

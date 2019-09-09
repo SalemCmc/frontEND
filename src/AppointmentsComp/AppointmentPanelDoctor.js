@@ -4,12 +4,12 @@
 
 
 import React, { Component } from 'react';
-//import { getTerminiByDoktor, ukloniTermin } from '../WebApi';
+
 import { getTerminiByDoktor, ukloniTermin } from "../WebApis/requestsGraphQL.js";
-import TerminRowItem from './TerminRowItem';
-import TerminDetails from './TerminDetails';
-import TerminEvidentiraj from './TerminEvidentiraj';
-import TerminAdd from './TerminAdd';
+import RowItem from './RowItem';
+import AppointmentDetails from './AppointmentDetails';
+import AppointmentRegister from './AppointmentRegister';
+import AppointmentAdd from './AppointmentAdd';
 import Spinner from '../CommonComponents/Spinner'
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom'
@@ -17,7 +17,7 @@ import Confirm from "../CommonComponents/Confirm"
 
 import Modal from '../CommonComponents/Modal';
 
-class TerminiDoktor extends Component {
+class AppointmentPanelDoctor extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -102,9 +102,9 @@ class TerminiDoktor extends Component {
 
   render() {
     let childComponent = null;
-    if (this.state.action === "INFO") { childComponent = <TerminDetails id={this.state.idTermin} />; }
-    if (this.state.action === "EVIDENTIRAJ") { childComponent = <TerminEvidentiraj id={this.state.idTermin} vlasnikID={this.state.vlasnikID} refreshParent={this.loadTermini} />; }
-    if (this.state.action === "REZERVISI") { childComponent = <TerminAdd refreshParent={this.loadTermini} idKlijent={null} />; }
+    if (this.state.action === "INFO") { childComponent = <AppointmentDetails id={this.state.idTermin} />; }
+    if (this.state.action === "EVIDENTIRAJ") { childComponent = <AppointmentRegister id={this.state.idTermin} vlasnikID={this.state.vlasnikID} refreshParent={this.loadTermini} />; }
+    if (this.state.action === "REZERVISI") { childComponent = <AppointmentAdd refreshParent={this.loadTermini} idKlijent={null} />; }
     if (this.state.action === "UKLONI") { childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>; }
 
 
@@ -145,7 +145,7 @@ class TerminiDoktor extends Component {
               </thead>
               <tbody>
                 {this.state.TerminiList.map((item, index) =>
-                  <TerminRowItem key={index} item={item} sat={index + 8 + ' : 00'} onClickAction={this.onClickAction} />
+                  <RowItem key={index} item={item} sat={index + 8 + ' : 00'} onClickAction={this.onClickAction} />
                 )}
               </tbody>
             </table>}
@@ -160,4 +160,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps)(TerminiDoktor);
+export default connect(mapStateToProps)(AppointmentPanelDoctor);

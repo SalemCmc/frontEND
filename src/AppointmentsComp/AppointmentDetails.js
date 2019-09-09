@@ -1,10 +1,9 @@
 import React, { Component } from 'react';
-///import {getTerminDetails} from '../WebApi';
 import { getTerminDetails } from "../WebApis/requestsGraphQL.js";
 
 import { getDateObject } from '../Utils/DateUtils';
 
-class TerminDetails extends Component {
+class AppointmentDetails extends Component {
   constructor(props) {
     super(props);
     this.state = { Termin: null, Usluga: null, Pacijent: null }
@@ -61,5 +60,5 @@ class TerminDetails extends Component {
     );
   }
 }
-//Modal.propTypes = {  onClose: PropTypes.func.isRequired,  show: PropTypes.bool,  children: PropTypes.node};
-export default TerminDetails;
+
+export default AppointmentDetails;

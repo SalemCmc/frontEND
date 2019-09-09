@@ -7,8 +7,7 @@ import dijagnoza from '../Icons/dijagnoza.jpg';
 import lekovi from '../Icons/lekovi.jpg';
 import pregled from '../Icons/pregled.jpg';
 
-
-class TerminEvidentiraj extends Component {
+class AppointmentRegister extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -282,4 +281,4 @@ class TerminEvidentiraj extends Component {
     }
 }
 //Modal.propTypes = {  onClose: PropTypes.func.isRequired,  show: PropTypes.bool,  children: PropTypes.node};
-export default TerminEvidentiraj;
+export default AppointmentRegister;

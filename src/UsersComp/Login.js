@@ -21,7 +21,7 @@ class Login extends Component {
     if (nextProps.auth.isAuthenticated === true) {
       if (nextProps.auth.user.rola === "Doctor")  // treba i za admina uraditi!
       {
-        this.props.history.push('/Termini');
+        this.props.history.push('/Appointments');
       }
       else { this.props.history.push('/Notifications'); }
 
