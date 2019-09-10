@@ -1,16 +1,16 @@
 
 import store from '../store';
-import { GET_EMPLOYEE_SENDERS, GET_CLIENT_SENDERS, GET_COUNT_NEW_MSG,GET_MESSAGES, MESSAGE_LOADING,GET_ERRORS, CLEAR_ERRORS } from './types';
-// TO DO: IMPLEMENT----->>>   POST_MESSAGE,SET_SEEN, DELETE_MESSAGE,  
+import { GET_EMPLOYEE_SENDERS, GET_CLIENT_SENDERS, GET_COUNT_NEW_MSG, GET_MESSAGES, MESSAGE_LOADING, GET_ERRORS, CLEAR_ERRORS } from './types';
+// TO DO: IMPLEMENT----->>>   ,SET_SEEN, DELETE_MESSAGE,  
 
-import { getCountNewMessage, setProcitanoMsg, getPosiljaociPoruka,getPoruke } from "../WebApis/requestsGraphQL.js";
+import { getCountNewMessage, setProcitanoMsg, getPosiljaociPoruka, getPoruke, PostPoruke, delleteMessage } from "../WebApis/requestsGraphQL.js";
 
 
 /// ZAMJENI searchParams SA sendersParams
 
 export const getMessageSenders = searchParams => async dispatch => {
-   
-    dispatch(setMessagessLoading(true,false));
+
+    dispatch(setMessagessLoading(true, false));
     dispatch(getCountNewMessag(searchParams.userID));
     dispatch({ type: CLEAR_ERRORS, payload: { error: false, errorMessage: "" } })
 
@@ -71,7 +71,7 @@ export const getMessageSenders = searchParams => async dispatch => {
 
 export const getCountNewMessag = ID => async dispatch => {
     getCountNewMessage(ID).then(coutNewMess => {
-     
+
         if (coutNewMess.Osoblje === 0) coutNewMess.Osoblje = "";
         if (coutNewMess.Klijent === 0) coutNewMess.Klijent = "";
 
@@ -102,45 +102,79 @@ export const setMessagessLoading = (sendersL, messagesL) => {
     return {
         type: MESSAGE_LOADING,
         sendersLoading: sendersL,
-        messagesLoading:messagesL
+        messagesLoading: messagesL
     };
 };
 
 /// ONLY MESSAGES:
 export const getMessages = messagesParams => async dispatch => {
-    
-    if(messagesParams.row===0)  // CLEAN
+
+    if (messagesParams.row === 0)  // CLEAN
     {
         dispatch({
             type: GET_MESSAGES,
             messagesList: [],
-            messagesParams:{}
+            messagesParams: {}
         })
     }
-    dispatch(setMessagessLoading(false,true));
+    dispatch(setMessagessLoading(false, true));
     getPoruke(messagesParams.currentUserID, messagesParams.senderID, messagesParams.row)
         .then(response => {
-             
-            let messagesList=[];
-            if(messagesParams.row===0)  // FIRST CLICK ON NEW SENDER
+
+            let messagesList = [];
+            if (messagesParams.row === 0)  // FIRST CLICK ON NEW SENDER
             {
-                messagesList=response.reverse();
+                messagesList = response.reverse();
             }
-            else
-            {
+            else {
                 let newMessages = response.reverse();
                 messagesList = newMessages.concat(store.getState().messages.messagesList);
             }
 
-        dispatch({
-            type: GET_MESSAGES,
-            messagesList: messagesList,
-            messagesParams:messagesParams
-        }) 
-    }
-    )
+            dispatch({
+                type: GET_MESSAGES,
+                messagesList: messagesList,
+                messagesParams: messagesParams
+            })
+        }
+        )
         .catch(err => {
 
+            dispatch({ type: GET_ERRORS, payload: err })
+        }
+        );
+};
+export const addMessage = message => async dispatch => {
+
+    dispatch(setMessagessLoading(false, true));
+    PostPoruke(message).then(response => {
+
+        let messagesList = [];
+        messagesList = store.getState().messages.messagesList.concat(response);
+        dispatch({
+            type: GET_MESSAGES,
+            messagesList: messagesList
+        })
+    })
+        .catch(err => {
+            dispatch({ type: GET_ERRORS, payload: err })
+        });
+};
+export const deleteMessage = (id, index) => async dispatch => {
+
+    dispatch(setMessagessLoading(false, true));
+
+    delleteMessage(id).then(response => {
+
+        let newMessagesList = store.getState().messages.messagesList;
+        newMessagesList[index].Sadrzaj = "*** deleted message ***";
+
+        dispatch({
+            type: GET_MESSAGES,
+            messagesList: newMessagesList
+        })
+    })
+        .catch(err => {
             dispatch({ type: GET_ERRORS, payload: err })
         }
         );

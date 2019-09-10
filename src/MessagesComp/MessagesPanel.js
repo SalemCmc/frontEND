@@ -2,12 +2,12 @@
 import React, { Component } from 'react';
 import Messagetem from './Messagetem';
 
-import { getPoruke, PostPoruke, delleteMessage } from "../WebApis/requestsGraphQL.js";
+
 import Spinner from '../CommonComponents/Spinner'
 import { Link } from 'react-router-dom'
 // REDUX:
 import { connect } from 'react-redux';
-import { getMessageSenders, setSeen, getMessages } from '../actions/messagesActions';
+import { getMessageSenders, setSeen, getMessages, addMessage, deleteMessage } from '../actions/messagesActions';
 
 
 
@@ -15,9 +15,9 @@ class MessagesPanel extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      poruke: [], rola: "Client", limit: 6, rowPosiljaoci: 0, rowPoruke: 0,
+      rola: "Client", limit: 6, rowPosiljaoci: 0,
       selectedUser: { Korisnik: "", KorisnikID: "", Slika: "" },
-      showMsgBlock: false, hoverItem: -1, searchString: ""
+      showMsgBlock: false, hoverItem: -1
     };
 
     this.selectItem = this.selectItem.bind(this);
@@ -25,11 +25,11 @@ class MessagesPanel extends Component {
     this.loadMorePoruke = this.loadMorePoruke.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.hoverMsg = this.hoverMsg.bind(this);
-    this.delleteMsg = this.delleteMsg.bind(this);
+
     this.loadMorePosiljaoci = this.loadMorePosiljaoci.bind(this);
   }
 
-  componentDidMount() {  console.log("C MOUNT MESS: ", this.props.messages);
+  componentDidMount() {
     if (this.props.messages.clients.length < 1) {
       this.getSenders();
     }
@@ -43,60 +43,50 @@ class MessagesPanel extends Component {
     searchParams.role = this.state.rola;
     searchParams.limit = this.state.limit;
     searchParams.row = row;
-
     searchParams.searchString = this.SearchString.value;
     this.SearchString.value = "";
 
     await this.props.getMessageSenders(searchParams);  // REDUX
-
   }
   async selectItem(id) {
 
     // SET SEEN
-        let list = [];
-        if (this.state.rola === "Client") {
-          list = this.props.messages.clients;
-        }
-        else {
-          list = this.props.messages.employees;
-        }
-        let item = list.find((element) => { return element.SagovornikID === id })
-        if (item.Procitano === false) {
-          item.Procitano = true;
-          this.props.setSeen(id, this.props.auth.user.id)
-        }
+    let list = [];
+    if (this.state.rola === "Client") {
+      list = this.props.messages.clients;
+    }
+    else {
+      list = this.props.messages.employees;
+    }
+    let item = list.find((element) => { return element.SagovornikID === id })
+    if (item.Procitano === false) {
+      item.Procitano = true;
+      this.props.setSeen(id, this.props.auth.user.id)
+    }
     // SET RIGHT PANEL (WITH MESSAGES AND SELECTED SENDER)
-        this.setState({ selectedUser: item, showMsgBlock: true });         // sta ovaj diop radi provjeri???
-       
+    this.setState({ selectedUser: item, showMsgBlock: true });         // sta ovaj diop radi provjeri???
+
     // LOAD MESAGE LIST FOR SELECTED SENDER
-    
-      let messagesParams={};
-          messagesParams.currentUserID=this.props.auth.user.id;
-          messagesParams.senderID=id;
-          messagesParams.row=0;  // FIRST TIME CLICK!
 
-          await  this.props.getMessages(messagesParams);
-          this.Message.value = "";   
+    let messagesParams = {};
+    messagesParams.currentUserID = this.props.auth.user.id;
+    messagesParams.senderID = id;
+    messagesParams.row = 0;  // FIRST TIME CLICK!
+
+    await this.props.getMessages(messagesParams); //REDUX
+    this.Message.value = "";
   }
-
-
   async loadMorePoruke() {
 
     if (this.state.selectedID === null) return;
-/*     let row = this.state.rowPoruke + 5;
-    let por = this.state.poruke; */
 
-  
-      let messagesParams={};
-          messagesParams.currentUserID=this.props.auth.user.id;
-          messagesParams.senderID=this.state.selectedUser.SagovornikID;
-          messagesParams.row=this.props.messages.messagesList.length;
+    let messagesParams = {};
+    messagesParams.currentUserID = this.props.auth.user.id;
+    messagesParams.senderID = this.state.selectedUser.SagovornikID;
+    messagesParams.row = this.props.messages.messagesList.length;
 
     this.props.getMessages(messagesParams);
-
-
   }
-
   async loadMorePosiljaoci() {
 
     let row = 0;
@@ -108,7 +98,6 @@ class MessagesPanel extends Component {
     }
     this.getSenders(row);
   }
-
   async changeRole() {
 
     let newRpla = "Client";
@@ -135,9 +124,9 @@ class MessagesPanel extends Component {
         Procitano: false,
         Aktivno: true
       }
-      await PostPoruke(newMessage);
+      e.preventDefault();  // bez ovoga kurzor se pomjeri na dole nakon entera
+      await this.props.addMessage(newMessage);
       this.Message.value = "";
-      this.selectItem(this.state.selectedUser.SagovornikID);
 
     }
   }
@@ -147,9 +136,7 @@ class MessagesPanel extends Component {
   }
   delleteMsg(id, index) {
 
-    delleteMessage(id);  // sinhroni poziv...
-    let delItem = this.state.poruke[index];
-    delItem.Sadrzaj = "*** deleted message ***";    // nije bas najispravnije (treba setstate), ali neka stoji za sad ovako...
+    this.props.deleteMessage(id, index);
 
   }
   render() {
@@ -181,11 +168,11 @@ class MessagesPanel extends Component {
 
           <div className="messagesearchelem2">
             <div className="messagesearchlist" ref={(el) => { this.messagesEnd = el; }} >
-              
-            {this.props.messages.sendersLoading === true ?
-          <Spinner size="50px" />
-          :""}
-              
+
+              {this.props.messages.sendersLoading === true ?
+                <Spinner size="50px" />
+                : ""}
+
               <table className="table-hover" style={{ width: "100%" }}>
                 <tbody>
                   {this.state.rola === "Client" ?
@@ -198,7 +185,7 @@ class MessagesPanel extends Component {
                     )}
                 </tbody>
               </table>
-            
+
             </div>
             <center><button float="center" type="button" className="btn btn-link" onClick={this.loadMorePosiljaoci} >load more...</button></center>
 
@@ -215,10 +202,10 @@ class MessagesPanel extends Component {
             </div>
 
             <div className="containermessage" >
-            
-            {this.props.messages.messagesLoading === true  ?
-               <Spinner size="30px" />
-          :""}
+
+              {this.props.messages.messagesLoading === true ?
+                <Spinner size="30px" />
+                : ""}
               {this.props.messages.messagesList.map((item, index) =>
                 <div key={item._id} className="messagerow"
                   onMouseEnter={() => { this.hoverMsg(index) }} onMouseLeave={() => { this.hoverMsg(index) }}    >
@@ -257,5 +244,5 @@ const mapStateToProps = state => ({
   messages: state.messages
 });
 
-export default connect(mapStateToProps, { getMessageSenders, setSeen, getMessages })(MessagesPanel);
+export default connect(mapStateToProps, { getMessageSenders, setSeen, getMessages, addMessage, deleteMessage })(MessagesPanel);
 

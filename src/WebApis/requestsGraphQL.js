@@ -338,12 +338,12 @@ export async function getPoruke(korID, sagovID, row1) {
 }
 export async function PostPoruke(input) {
   const mutation = `mutation addPor( $input: newPoruka!)
-  {addPoruka(input: $input)
+  {addPoruka(input: $input){ _id Sadrzaj Datum Vrijeme PosiljaocID Procitano Aktivno}
   }`;
 
   //console.log("input MSG: ",input);
   let resp = await graphqlRequest(mutation, { input });
-  //console.log("ADD MSG: ",resp);
+  
   return resp.addPoruka;
 }
 
