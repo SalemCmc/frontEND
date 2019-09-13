@@ -1,10 +1,30 @@
 
 
-import { GET_USERS, GET_USER, UPDATE_USER, GET_ERRORS, USERS_LOADING, CLEAR_ERRORS } from './types';
+import { GET_USERS_SHORT, GET_USERS, GET_USER, UPDATE_USER, GET_ERRORS, USERS_LOADING, CLEAR_ERRORS } from './types';
 import { getUsersG } from "../WebApis/requestsGraphQL.js";
-import { getUserByIDG, updateUserG } from "../WebApis/requestsGraphQL.js";
+import { getUserByIDG, updateUserG, getKorisniciShort } from "../WebApis/requestsGraphQL.js";
+
+export const getUsersShort = (searcString, type) => dispatch => {
+
+    dispatch(setUsersLoading(true));
+    dispatch({ type: CLEAR_ERRORS, payload: { error: false, errorMessage: "" } })
 
 
+    getKorisniciShort(searcString, type)
+        .then(response => {
+
+            dispatch({
+                type: GET_USERS_SHORT,
+                usersShortList: response,
+            })
+        }
+        )
+        .catch(err => {
+            dispatch(setUsersLoading(false));
+            dispatch({ type: GET_ERRORS, payload: err })
+        }
+        );
+};
 export const getUsers = searchParams => async dispatch => {
 
     dispatch(setUsersLoading(true));
@@ -45,7 +65,7 @@ export const getUserByID = ID => async dispatch => {
     })
     await getUserByIDG(ID)
         .then(response => {
-             console.log("RESPONSE U AKCIJI: ", response);
+            console.log("RESPONSE U AKCIJI: ", response);
             dispatch({
                 type: GET_USER,
                 payload: response
@@ -73,7 +93,7 @@ export const updateUser = user => async dispatch => {
         }
         )
         .catch(err => {
-           
+
             dispatch({
                 type: GET_ERRORS,
                 payload: err

@@ -1,7 +1,7 @@
 
 
 import React, { Component } from "react";
-
+import alerto from '../Icons/alerto.png';
 
 class Confirm extends Component {
 
@@ -14,23 +14,20 @@ class Confirm extends Component {
     return (
       <div >
 
+<center>
 
-
+<img src={alerto} style={{ width: '50px',marginBottom:"20px" }} alt="icon" />
 
         <p className="card-text">{this.props.message}</p>
+       
         <hr />
-        <a
-          href={hrefLink} className="card-link"
-          onClick={this.props.confirmClick}                >
-          YES
-            </a>
-        <a
-          href={hrefLink}
-          className="card-link"
-          onClick={this.props.hide}                >
-          NO
-            </a>
+        <a href={hrefLink} className="card-link"onClick={this.props.confirmClick}> YES</a>
+        <a href={hrefLink}className="card-link"onClick={this.props.hide}>NO</a>
+          
+                          
 
+            
+ </center>
       </div>
     );
   }

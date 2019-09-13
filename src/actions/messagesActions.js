@@ -1,31 +1,26 @@
 
 import store from '../store';
 import { GET_EMPLOYEE_SENDERS, GET_CLIENT_SENDERS, GET_COUNT_NEW_MSG, GET_MESSAGES, MESSAGE_LOADING, GET_ERRORS, CLEAR_ERRORS } from './types';
-// TO DO: IMPLEMENT----->>>   ,SET_SEEN, DELETE_MESSAGE,  
-
 import { getCountNewMessage, setProcitanoMsg, getPosiljaociPoruka, getPoruke, PostPoruke, delleteMessage } from "../WebApis/requestsGraphQL.js";
 
-
-/// ZAMJENI searchParams SA sendersParams
-
-export const getMessageSenders = searchParams => async dispatch => {
+export const getMessageSenders = sendersParams => async dispatch => {
 
     dispatch(setMessagessLoading(true, false));
-    dispatch(getCountNewMessag(searchParams.userID));
+    dispatch(getCountNewMessag(sendersParams.userID));
     dispatch({ type: CLEAR_ERRORS, payload: { error: false, errorMessage: "" } })
 
     //set search setring to array (clients/employees)
-    let searchString = { "Client": store.getState().messages.searchParams.searchString["Client"], "Employee": store.getState().messages.searchParams.searchString["Employee"] };
-    searchString[searchParams.role] = searchParams.searchString;
-    searchParams.searchString = searchString;
+    let searchString = { "Client": store.getState().messages.sendersParams.searchString["Client"], "Employee": store.getState().messages.sendersParams.searchString["Employee"] };
+    searchString[sendersParams.role] = sendersParams.searchString;
+    sendersParams.searchString = searchString;
 
-    await getPosiljaociPoruka(searchParams.userID, searchParams.role, searchParams.row, searchParams.searchString[searchParams.role], searchParams.limit)
+    await getPosiljaociPoruka(sendersParams.userID, sendersParams.role, sendersParams.row, sendersParams.searchString[sendersParams.role], sendersParams.limit)
         .then(response => {
 
-            if (searchParams.role === "Client") {
+            if (sendersParams.role === "Client") {
 
                 let mergedLists = [];
-                if (searchParams.searchString[searchParams.role] !== store.getState().messages.searchParams.searchString["Client"]) {
+                if (sendersParams.searchString[sendersParams.role] !== store.getState().messages.sendersParams.searchString["Client"]) {
                     mergedLists = response;
                 }
                 else {
@@ -33,19 +28,16 @@ export const getMessageSenders = searchParams => async dispatch => {
                     let newList = response;
                     mergedLists = currentList.concat(newList);
                 }
-
                 dispatch({
                     type: GET_CLIENT_SENDERS,
                     payload: mergedLists,
-                    searchParams: searchParams
+                    sendersParams: sendersParams
                 })
-
             }
-            if (searchParams.role === "Employee") {
+            if (sendersParams.role === "Employee") {
 
                 let mergedLists = [];
-                if (searchParams.searchString[searchParams.role] !== store.getState().messages.searchParams.searchString["Employee"]) {
-
+                if (sendersParams.searchString[sendersParams.role] !== store.getState().messages.sendersParams.searchString["Employee"]) {
                     mergedLists = response;
                 }
                 else {
@@ -53,17 +45,15 @@ export const getMessageSenders = searchParams => async dispatch => {
                     let newList = response;
                     mergedLists = currentList.concat(newList);
                 }
-
                 dispatch({
                     type: GET_EMPLOYEE_SENDERS,
                     payload: mergedLists,
-                    searchParams: searchParams
+                    sendersParams: sendersParams
                 })
             }
         }
         )
         .catch(err => {
-
             dispatch({ type: GET_ERRORS, payload: err })
         }
         );

@@ -5,17 +5,18 @@
 
 import React, { Component } from 'react';
 
-import { getTerminiByDoktor, ukloniTermin } from "../WebApis/requestsGraphQL.js";
 import RowItem from './RowItem';
 import AppointmentDetails from './AppointmentDetails';
 import AppointmentRegister from './AppointmentRegister';
 import AppointmentAdd from './AppointmentAdd';
 import Spinner from '../CommonComponents/Spinner'
-import { connect } from 'react-redux';
 import { Link } from 'react-router-dom'
 import Confirm from "../CommonComponents/Confirm"
-
 import Modal from '../CommonComponents/Modal';
+
+// REDUX:
+import { connect } from 'react-redux';
+import { getAppointmentsByDoctor, removeAppointment } from '../actions/appointmentsActions';
 
 class AppointmentPanelDoctor extends Component {
   constructor(props) {
@@ -23,7 +24,7 @@ class AppointmentPanelDoctor extends Component {
     this.state = {
       TerminiList: [], currentDate: (new Date(new Date().getFullYear(), new Date().getMonth(),
         new Date().getDate() - new Date().getDay() + 1)),  // ovo je ponedeljak!
-      showWek: "", action: "", showModal: false, modalTitle: ""
+      action: "", showModal: false, modalTitle: "", weekAction: null
     };
     this.loadTermini = this.loadTermini.bind(this);
     this.loadTermini();
@@ -34,44 +35,36 @@ class AppointmentPanelDoctor extends Component {
     this.ukloniTermin = this.ukloniTermin.bind(this);
   }
 
+
+
   async loadTermini() {
 
     let dt = this.state.currentDate;
 
-    let datStringo = dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
-    let T = await getTerminiByDoktor(this.props.auth.user.id, datStringo);
+    let searchParams = {};
+    searchParams.doctorID = this.props.auth.user.id;
+    searchParams.date = dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
+    searchParams.weekAction = this.state.weekAction;
+    await this.props.getAppointmentsByDoctor(searchParams);  // REDUX
 
-    //let T = getTerminiByDoktor("5c863b423248087600c166ac", datStringo);
-    let shWk = this.state.currentDate.toLocaleDateString('de-DE').toString();
-    let fridayDate = new Date(this.state.currentDate);   //  <<<-----------------------------OBAVEZNO IDE NEW JER JE OVO REFERENTNI TIP PODATKA!!!
-    fridayDate.setDate(this.state.currentDate.getDate() + 4);
-    shWk = shWk + ' - ' + fridayDate.toLocaleDateString('de-DE').toString();
-    //this.setState({ TerminiList: T, showWek: shWk, show: false })
-    this.setState({ TerminiList: T, showWek: shWk })
-    //console.log("TERMINS:  : ", this.state.TerminiList);
   }
 
   async nextWeek() {
     var newDate = new Date(this.state.currentDate);
     newDate.setDate(newDate.getDate() + 7);
-    await this.setState({ currentDate: newDate, TerminiList: [] }); // console.log("datum state je KLIKNUTI /dana : ",  this.state.currentDate );
+    await this.setState({ currentDate: newDate, weekAction: "next" });
     this.loadTermini();
   }
   async prevWeek() {
     var newDate = new Date(this.state.currentDate);
     newDate.setDate(newDate.getDate() - 7);
-    await this.setState({ currentDate: newDate, TerminiList: [] });  //console.log("datum state je KLIKNUTI /dana : ",  this.state.currentDate );
+    await this.setState({ currentDate: newDate, weekAction: "previous" });
     this.loadTermini();
   }
   async ukloniTermin() {
-    //if (window.confirm("Da li ste sigurni da želite ukloniti termin?")) {
-    //console.log("uklon termina JE: : ", this.state.idTermin);    // novi tab:   window.open("exit.html", "Thanks for Visiting!");
 
-
-    await ukloniTermin(this.state.idTermin);
-    this.setState({ TerminiList: [], showModal: false, modalTitle: "" });
-    this.loadTermini();
-
+    this.props.removeAppointment(this.state.idTermin, "Doctor");
+    this.setState({ showModal: false, modalTitle: "" });
   }
 
 
@@ -90,8 +83,8 @@ class AppointmentPanelDoctor extends Component {
     this.setState({ showModal: true, action: "REZERVISI", modalTitle: "Book Appointment" });
 
   }
-
-  hideModal = () => { this.setState({ showModal: false }); this.loadTermini() };
+  //  hideModal = () => { this.setState({ showModal: false }); this.loadTermini() };
+  hideModal = () => { this.setState({ showModal: false }); };
 
   getDayDate(day) // generise string za header kolone u tabeli ispod  Mart 22, Jun 12 itd...
   {
@@ -104,11 +97,11 @@ class AppointmentPanelDoctor extends Component {
     let childComponent = null;
     if (this.state.action === "INFO") { childComponent = <AppointmentDetails id={this.state.idTermin} />; }
     if (this.state.action === "EVIDENTIRAJ") { childComponent = <AppointmentRegister id={this.state.idTermin} vlasnikID={this.state.vlasnikID} refreshParent={this.loadTermini} />; }
-    if (this.state.action === "REZERVISI") { childComponent = <AppointmentAdd refreshParent={this.loadTermini} idKlijent={null} />; }
+    if (this.state.action === "REZERVISI") { childComponent = <AppointmentAdd idKlijent={null} />; }
     if (this.state.action === "UKLONI") { childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>; }
 
 
-    return (
+    return ( 
       <div className="" >
         <div>
           <Modal show={this.state.showModal} handleClose={this.hideModal} title={this.state.modalTitle}>
@@ -117,26 +110,34 @@ class AppointmentPanelDoctor extends Component {
         </div>
 
         <div className="custtitlebox">
-          <h4 >Weekly Appointment Schedule</h4>
+          <h4 className="text-muted">Weekly Appointment Schedule</h4>
           <Link to="#" onClick={this.rezervisiTermin}>Book Appointment</Link>
         </div>
 
 
+
+
         <div className="custbodyconttent">
-          <br />
-          <center>
-            <div className="btn-group" role="group" aria-label="Basic example">
-              <button type="button" className="btn btn-outline-primary btn-sm" onClick={this.prevWeek}> ❮ Previouse Week </button> &emsp;
-        <input type="text" className="form-control" defaultValue={this.state.showWek} /> &emsp;
-         <button type="button" className="btn btn-outline-primary btn-sm" onClick={this.nextWeek}>Next Week  ❯ </button>
-            </div></center><br />
+
+          <div className="appotblheader">
+            <div className="btn-group" >
+              <h4 >{'Week: ' + this.getDayDate(0) + ' - ' + this.getDayDate(4)}</h4> &emsp;&emsp;
+
+            <div className="" >
+                <button type="button" className="btn btn-success btn-sm" onClick={this.prevWeek}>  ❮ &nbsp;</button>&emsp;
+                <button type="button" className="btn btn-success btn-sm" onClick={this.nextWeek}>  &nbsp; ❯  </button>
+              </div>
+            </div>
+
+          </div>
 
 
-          {this.state.TerminiList.length < 1 ?
+
+          {this.props.appointments.loading === true ?
             <Spinner />
             :
             <table id="tablePreview" className="table table-sm table-bordered">
-              <thead><tr className="table-info"><th><center>Time&nbsp;&nbsp;&nbsp;&nbsp; </center></th>
+              <thead><tr className="table-secondary"><th><center>Time&nbsp;&nbsp;&nbsp;&nbsp; </center></th>
                 <th><center>Monday - {this.getDayDate(0)}</center></th>
                 <th><center>Tuesday - {this.getDayDate(1)}</center></th>
                 <th><center>Wednesday - {this.getDayDate(2)}</center></th>
@@ -144,11 +145,14 @@ class AppointmentPanelDoctor extends Component {
                 <th><center>Friday - {this.getDayDate(4)}</center></th></tr>
               </thead>
               <tbody>
-                {this.state.TerminiList.map((item, index) =>
+
+                {this.props.appointments.appoByDoctorList[1].map((item, index) =>
                   <RowItem key={index} item={item} sat={index + 8 + ' : 00'} onClickAction={this.onClickAction} />
                 )}
+                <tr className="table-secondary"><th></th><th></th><th></th><th></th><th></th><th></th></tr>
               </tbody>
             </table>}
+
         </div>
       </div>
 
@@ -157,7 +161,8 @@ class AppointmentPanelDoctor extends Component {
 }
 //export default Termini;
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  appointments: state.appointments
 });
 
-export default connect(mapStateToProps)(AppointmentPanelDoctor);
+export default connect(mapStateToProps, { getAppointmentsByDoctor, removeAppointment })(AppointmentPanelDoctor);

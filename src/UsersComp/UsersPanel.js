@@ -79,7 +79,7 @@ class UsersPanel extends Component {
       <div >
         <div className="custtitlebox">
           <Search search={this.search} searchParams={this.props.users.searchParams} sstring="true" sdate="false" scheck="true" sradio="true" />
-          <h4 >Clients and Employees</h4>
+          <h4 className="text-muted">Clients and Employees</h4>
           <Link to="/UserAdd/registration">Add new user</Link>
         </div>
 

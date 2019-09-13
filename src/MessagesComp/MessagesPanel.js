@@ -1,51 +1,41 @@
 
 import React, { Component } from 'react';
-import Messagetem from './Messagetem';
-
-
-import Spinner from '../CommonComponents/Spinner'
 import { Link } from 'react-router-dom'
+import Spinner from '../CommonComponents/Spinner'
+import SenderItem from './SenderItem';
 // REDUX:
 import { connect } from 'react-redux';
 import { getMessageSenders, setSeen, getMessages, addMessage, deleteMessage } from '../actions/messagesActions';
 
-
-
 class MessagesPanel extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      rola: "Client", limit: 6, rowPosiljaoci: 0,
-      selectedUser: { Korisnik: "", KorisnikID: "", Slika: "" },
-      showMsgBlock: false, hoverItem: -1
-    };
+    this.state = { rola: "Client", limit: 6, selectedUser: { Korisnik: "", KorisnikID: "", Slika: "" }, showMsgBlock: false, hoverItem: -1 };
 
+    this.loadMoreMessages = this.loadMoreMessages.bind(this);
+    this.loadMoreSenders = this.loadMoreSenders.bind(this);
+    this.sendMessage = this.sendMessage.bind(this);
     this.selectItem = this.selectItem.bind(this);
     this.changeRole = this.changeRole.bind(this);
-    this.loadMorePoruke = this.loadMorePoruke.bind(this);
-    this.sendMessage = this.sendMessage.bind(this);
     this.hoverMsg = this.hoverMsg.bind(this);
-
-    this.loadMorePosiljaoci = this.loadMorePosiljaoci.bind(this);
   }
 
   componentDidMount() {
     if (this.props.messages.clients.length < 1) {
       this.getSenders();
     }
-
   }
 
   async getSenders(row = 0) {
 
     let searchParams = {};
-    searchParams.userID = this.props.auth.user.id;
-    searchParams.role = this.state.rola;
-    searchParams.limit = this.state.limit;
-    searchParams.row = row;
     searchParams.searchString = this.SearchString.value;
-    this.SearchString.value = "";
+    searchParams.userID = this.props.auth.user.id;
+    searchParams.limit = this.state.limit;
+    searchParams.role = this.state.rola;
+    searchParams.row = row;
 
+    this.SearchString.value = "";
     await this.props.getMessageSenders(searchParams);  // REDUX
   }
   async selectItem(id) {
@@ -76,7 +66,7 @@ class MessagesPanel extends Component {
     await this.props.getMessages(messagesParams); //REDUX
     this.Message.value = "";
   }
-  async loadMorePoruke() {
+  async loadMoreMessages() {
 
     if (this.state.selectedID === null) return;
 
@@ -87,7 +77,7 @@ class MessagesPanel extends Component {
 
     this.props.getMessages(messagesParams);
   }
-  async loadMorePosiljaoci() {
+  async loadMoreSenders() {
 
     let row = 0;
     if (this.state.rola === "Client") {
@@ -105,10 +95,10 @@ class MessagesPanel extends Component {
     await this.setState({ rola: newRpla, showMsgBlock: false });
 
     if (this.props.messages.employees.length < 1 && this.state.rola === "Employee") {
-      this.loadMorePosiljaoci();
+      this.loadMoreSenders();
     }
     if (this.props.messages.clients.length < 1 && this.state.rola === "Client") {
-      this.loadMorePosiljaoci();
+      this.loadMoreSenders();
     }
 
   }
@@ -135,21 +125,18 @@ class MessagesPanel extends Component {
     else { this.setState({ hoverItem: index }); }
   }
   delleteMsg(id, index) {
-
     this.props.deleteMessage(id, index);
-
   }
+
   render() {
     return (
 
       <div  >
         <div className="custtitlebox">
-          <h4>Messages</h4>
+          <h4 className="text-muted">Messages</h4>
         </div>
 
-
         <div className="leftnavipanel">
-
           <div className="messagesearchelem">
             <ul className="nav nav-tabs">
               <li className="nav-item">  <a className="nav-link active" data-toggle="tab" href="#home" onClick={this.changeRole}>Clients
@@ -163,7 +150,7 @@ class MessagesPanel extends Component {
           </div>
           <div className="messagesearchelem">
             <input className="form-control form-control-sm" ref={(ref) => this.SearchString = ref} placeholder="Search..."
-              type="text" onChange={() => { this.getSenders() }} value={this.props.messages.searchParams.searchString[this.state.rola]} />
+              type="text" onChange={() => { this.getSenders() }} value={this.props.messages.sendersParams.searchString[this.state.rola]} />
           </div>
 
           <div className="messagesearchelem2">
@@ -172,22 +159,20 @@ class MessagesPanel extends Component {
               {this.props.messages.sendersLoading === true ?
                 <Spinner size="50px" />
                 : ""}
-
               <table className="table-hover" style={{ width: "100%" }}>
                 <tbody>
                   {this.state.rola === "Client" ?
                     this.props.messages.clients.map((item, index) =>
-                      <tr key={index}><th><Messagetem itemShow={item} selectItem={this.selectItem} /></th></tr>
+                      <tr key={index}><th><SenderItem itemShow={item} selectItem={this.selectItem} /></th></tr>
                     )
                     :
                     this.props.messages.employees.map((item, index) =>
-                      <tr key={index}><th><Messagetem itemShow={item} selectItem={this.selectItem} /></th></tr>
+                      <tr key={index}><th><SenderItem itemShow={item} selectItem={this.selectItem} /></th></tr>
                     )}
                 </tbody>
               </table>
-
             </div>
-            <center><button float="center" type="button" className="btn btn-link" onClick={this.loadMorePosiljaoci} >load more...</button></center>
+            <center><button float="center" type="button" className="btn btn-link" onClick={this.loadMoreSenders} >load more...</button></center>
 
           </div>
         </div>
@@ -198,7 +183,7 @@ class MessagesPanel extends Component {
             <div className="form-inline">
               <img src={this.state.selectedUser.SagovornikAvatar} className="avatarchat" alt="slika" />
               <h6><b>{this.state.selectedUser.Sagovornik} </b></h6>
-              <center><button float="right" type="button" className="btn btn-link" onClick={this.loadMorePoruke} >load more...</button></center>
+              <center><button float="right" type="button" className="btn btn-link" onClick={this.loadMoreMessages} >load more...</button></center>
             </div>
 
             <div className="containermessage" >
@@ -217,28 +202,18 @@ class MessagesPanel extends Component {
                       </Link>
                       : ""}
                     {item.Sadrzaj}
-
                   </div>
-
                   <br />
                 </div>
               )}
             </div>
-
-
             <textarea className="form-control form-control-sm" rows="3" ref={(ref) => this.Message = ref} onKeyDown={this.sendMessage} placeholder="your message" type="text" />
-
           </div>
           : ""}
-
       </div>
-
     );
   }
 }
-
-//export default MessagesPanel;
-
 const mapStateToProps = state => ({
   auth: state.auth,
   messages: state.messages

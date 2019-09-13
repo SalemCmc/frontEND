@@ -9980,14 +9980,16 @@ border: 1px solid red;
     margin-right: -8px;
     margin-left: -8px; 
     margin-bottom: 15px; 
-
-    padding-top: 15px;
-    padding-bottom: 10px; 
+    border-radius: 0.25rem;
+    padding-top: 10px;
+    padding-bottom: 3px; 
     padding-left: 15px; 
     padding-right: 15px; 
-    border-bottom: 1px solid lightgrey;
-
+   
+   
   }
+
+
   .custtitleboxpets{
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     background-color: white;
@@ -10131,22 +10133,40 @@ border: 1px solid red;
   {
     background-color: white;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    padding: 2px; 
+    padding: 0px; 
+   
+    border-radius: 0.25rem;
+    margin-bottom: 12px;
+    margin-top: 12px;
+
   }
 
 
-.custtd{
+
+.custtdactive{
   width: 20%;
- 
+  padding-bottom: -20px;
+  background-color: rgb(255, 255, 235);
+}
+.custtdactive :hover {
+  background-color: rgb(255, 223, 123);
+}
+.custtddone{
+  width: 20%;
+  background-color: rgb(238,253,236);
+}
+.custtddone :hover {
+  background-color:  rgb(144,238,144);
 
 }
-.custtermincard{
-  padding-bottom: 0px;
-  padding-top: 10px;
+.custtexpired{
+  width: 20%;
+  color: gray;
+  padding: 0px;
+  background-color: rgb(237, 242, 248);
 }
-.custtermincard:hover {
-
-  background-color: rgba(211, 211, 211, 0.603);
+.custtexpired :hover {
+  background-color: gainsboro;
 }
 
 .rightpanel
@@ -10462,3 +10482,15 @@ cursor: pointer;
 .btncollapse.collapsed:after {
   content: "_";
 }
+.appotblheader
+{
+  background-color: #95a5a6;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  padding-left: 15px;
+  color: white;
+  border: 0px solid white;
+  margin-left: 1px;
+  margin-right: 1px;
+
+}  

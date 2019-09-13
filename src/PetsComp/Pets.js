@@ -32,16 +32,14 @@ class Pets extends Component {
     this.addNewPetModal = this.addNewPetModal.bind(this);
     this.removePet = this.removePet.bind(this);
     this.detailPetModal = this.detailPetModal.bind(this);
-    
+
   }
 
-  componentDidMount() 
-  {
-        if(this.props.pets.searchParams !== {} && this.props.pets.searchParams.userID!==this.props.VlasnikID )
-        {
-          this.setState({ row: 0, pn: 1 });
-          this.loadPets();
-        }
+  componentDidMount() {
+    if (this.props.pets.searchParams !== {} && this.props.pets.searchParams.userID !== this.props.VlasnikID) {
+      this.setState({ row: 0, pn: 1 });
+      this.loadPets();
+    }
   }
 
   async handlePageChange(pageNumber) {
@@ -53,12 +51,12 @@ class Pets extends Component {
     this.setState({ showModal: !this.state.showModal });
   };
   async loadPets() {
-                    let searchParams={};
-                        searchParams.userID=this.props.VlasnikID;
-                        searchParams.row=this.state.row;
-                        searchParams.limit=this.state.limit;
-                        searchParams.pageNumber = this.state.pn;
-                    await this.props.getPetsByUserID(searchParams);  // REDUX
+    let searchParams = {};
+    searchParams.userID = this.props.VlasnikID;
+    searchParams.row = this.state.row;
+    searchParams.limit = this.state.limit;
+    searchParams.pageNumber = this.state.pn;
+    await this.props.getPetsByUserID(searchParams);  // REDUX
   }
 
   removePetModal(ID) {
@@ -91,12 +89,12 @@ class Pets extends Component {
         <div className="">
 
           <div className="custtitleboxpets">
-            {this.props.pets.count>0 ? <h4 >Pets</h4> : <h4 className="text-danger">This user doesn't own any pet!</h4>}
+            {this.props.pets.count > 0 ? <h4 className="text-muted" >Pets</h4> : <h4 className="text-danger">This user doesn't own any pet!</h4>}
             <Link to="#" onClick={this.addNewPetModal} >Add pet</Link>
           </div>
 
           <Modal show={this.state.showModal} handleClose={this.handleModal} title={this.state.modalTitle} >
-                   {this.state.modalChild}
+            {this.state.modalChild}
           </Modal>
 
           <div className="col-container">

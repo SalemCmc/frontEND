@@ -235,7 +235,7 @@ export async function PostTermin(input) {
   return false;
 
 }
-export async function EvidentirajTermin(input) {
+export async function evidentirajTermin(input) {
   const query = `mutation addTerm($input : objectForInsert)
                   {
                                 evidencijaUsluge(input: $input) 
@@ -343,7 +343,7 @@ export async function PostPoruke(input) {
 
   //console.log("input MSG: ",input);
   let resp = await graphqlRequest(mutation, { input });
-  
+
   return resp.addPoruka;
 }
 
@@ -391,7 +391,8 @@ export async function loadTimeline(id, row) {
   return resp.getPetServiceTimeline;
 }
 
-export async function getTimelineItemDetails(id) { console.log("RESPO: ", id);
+export async function getTimelineItemDetails(id) {
+  console.log("RESPO: ", id);
   const query = `query getTimelineDetail($id : ID!)
                                     {getPetServiceDetails(id: $id)
                                      { Service Date Time  Price Description Doctor DoctorAvatar
@@ -400,7 +401,7 @@ export async function getTimelineItemDetails(id) { console.log("RESPO: ", id);
                                   }`;
 
   let resp = await graphqlRequest(query, { id });
- 
+
   return resp.getPetServiceDetails;
 }
 

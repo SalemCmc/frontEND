@@ -1,9 +1,12 @@
 
 import React, { Component } from 'react';
-//import { getKorisniciShort, PostTermin } from '../WebApi';
-//import { getKorisniciShort } from '../WebApi';
-import { PostTermin, getKorisniciShort, getFreeAppointmentTime } from "../WebApis/requestsGraphQL.js";
+import { getKorisniciShort, getFreeAppointmentTime } from "../WebApis/requestsGraphQL.js";
 import Spinner from '../CommonComponents/Spinner'
+
+// REDUX:getAppointmentsByDoctor
+import { connect } from 'react-redux';
+import { addAppointment, setAppointmentsAddSuccess } from '../actions/appointmentsActions';
+import { getUsersShort } from '../actions/usersActions';
 
 
 
@@ -11,28 +14,28 @@ class AppointmentAdd extends Component {
     constructor(props) {
         super(props);
         let korID = this.props.idKlijent;
-        this.state = {
-            Doktori: [], Korisnici: [], selectedKorisnik: "", selectedKorisnikID: korID, errorMsg: null, sati: [], timeMessage: null, selectedTime: null, disableSave: false
-
-        };
+        this.state = { Korisnici: [], selectedKorisnik: "", selectedKorisnikID: korID, sati: [], timeMessage: null, selectedTime: null, errorMsg: null };
 
         this.getKorisnici = this.getKorisnici.bind(this);
-        this.getDoktori = this.getDoktori.bind(this);
-        this.getDoktori();
+
         this.selectKorisnik = this.selectKorisnik.bind(this);
         this.selectTime = this.selectTime.bind(this);
         this.spasiTermin = this.spasiTermin.bind(this);
         this.validiraj = this.validiraj.bind(this);
-        this.cleanErrorMsg = this.cleanErrorMsg.bind(this);
+
         this.getFreeAppointmentTime = this.getFreeAppointmentTime.bind(this);
 
     }
-    async getDoktori() {
-        let kor = await getKorisniciShort(' ', "Doctor");
-        this.setState({ Doktori: kor });
+
+    componentDidMount() {
+        if (this.props.usersShortList.length < 1) {
+            this.props.getUsersShort(' ', "Doctor");
+        }
+        this.props.setAppointmentsAddSuccess(false);
     }
 
-    async getKorisnici() {
+
+    async getKorisnici() {    // POSLIJE PREBACI NA REDUX!
 
         // if (this.SearchString.value.length > 1) {
         let kor = await getKorisniciShort(this.SearchString.value, "Client");
@@ -90,10 +93,11 @@ class AppointmentAdd extends Component {
     }
     async spasiTermin() {
 
-        this.cleanErrorMsg();
+        this.setState({ errorMsg: null });
         if (!this.validiraj()) { return; }
 
         var newTermin = {
+
             VlasnikID: this.state.selectedKorisnikID,
             DoktorID: this.Doktor.value,
             Napomena: this.Napomena.value,
@@ -102,19 +106,16 @@ class AppointmentAdd extends Component {
             Aktivan: true,
             Obavljen: false
         };
-        let response = await PostTermin(newTermin);
-        if (response !== true) {
 
-            this.setState({ errorMsg: response.error });
-            return;
+        let type = "Client";
+        if (this.props.idKlijent === null) {
+            type = "Doctor";
         }
+        await this.props.addAppointment(newTermin, type);
 
-        this.setState({ errorMsg: false, disableSave: true });
 
     }
-    cleanErrorMsg() {
-        this.setState({ errorMsg: null });
-    }
+
     async  getFreeAppointmentTime() {
 
         if (this.Doktor.value !== "" && this.Datum.value.toString() !== "") {
@@ -137,85 +138,94 @@ class AppointmentAdd extends Component {
         this.setState({ selectedTime: hour });
     }
     render() {
+
+
         let customAlert = null;
         if (this.state.errorMsg !== null) {
             customAlert = <div className="alert alert-dismissible alert-danger">
                 <strong>Warning!</strong> <br /> {this.state.errorMsg}
             </div>
         }
-        if (this.state.errorMsg === false) {
-
-            customAlert = <div className="alert alert-dismissible alert-success">
-                <strong>Appointment saved successflly!</strong>
+        if (this.props.errors.error === true) {
+            customAlert = <div className="alert alert-dismissible alert-danger">
+                <strong>Warning!</strong> <br /> {this.state.errorMsg}
             </div>
         }
 
 
+
         return (
+            <div >
+                {this.props.success === true ? <div className="alert alert-dismissible alert-success"><strong>Appointment saved successflly!</strong>   </div>
+                    :
 
-            <div className="" >
-                {customAlert}
-
-                <div className="row">
-                    {this.props.idKlijent === null ?
-                        <div className="col-sm-4">
-                            Client
+                    <div className="" >
+                        {customAlert}
+                        <div className="row">
+                            {this.props.idKlijent === null ?
+                                <div className="col-sm-4">
+                                    Client
                             <input className="form-control form-control-sm" ref={(ref) => this.Korisnik = ref}
-                                defaultValue={this.state.selectedKorisnik} placeholder="You didn't choose client!" type="text" readOnly />
+                                        defaultValue={this.state.selectedKorisnik} placeholder="You didn't choose client!" type="text" readOnly />
 
-                            Search clients
+                                    Search clients
                             <input className="form-control form-control-sm" ref={(ref) => this.SearchString = ref} placeholder="name or lastaname" type="text" onChange={this.getKorisnici} />
-                            <br />
-                            <table className="table table-sm table-bordered table-hover">
-                                <tbody>{this.state.Korisnici.map((item, index) =>
-                                    <tr key={index}>
-                                        <th>
-                                            <button type="button" className="btn btn-link btn-sm" onClick={() => this.selectKorisnik(item._id, item.Ime + ' ' + item.Prezime)}>{item.Ime + ' ' + item.Prezime}</button>
-                                        </th></tr>
-                                )}
-                                </tbody>
-                            </table>
-                        </div>
-                        : ""}
+                                    <br />
+                                    <table className="table table-sm table-bordered table-hover">
+                                        <tbody>{this.state.Korisnici.map((item, index) =>
+                                            <tr key={index}>
+                                                <th>
+                                                    <button type="button" className="btn btn-link btn-sm" onClick={() => this.selectKorisnik(item._id, item.Ime + ' ' + item.Prezime)}>{item.Ime + ' ' + item.Prezime}</button>
+                                                </th></tr>
+                                        )}
+                                        </tbody>
+                                    </table>
+                                </div>
+                                : ""}
 
-                    <div className="col-sm-4">
+                            <div className="col-sm-4">
 
-                        Doctor
+                                Doctor
                         <select className="form-control form-control-sm" ref={(ref) => this.Doktor = ref} onChange={this.getFreeAppointmentTime}>
-                            <option value=""  >Choose doctor</option>
-                            {this.state.Doktori.map(opt => { return (<option key={opt._id} ref={(ref) => this.DoktorID = ref} value={opt._id}>{opt.Ime + ' ' + opt.Prezime}</option>); })}
-                        </select>
-                        Date
+                                    <option value=""  >Choose doctor</option>
+                                    {this.props.usersShortList.map(opt => { return (<option key={opt._id} ref={(ref) => this.DoktorID = ref} value={opt._id}>{opt.Ime + ' ' + opt.Prezime}</option>); })}
+                                </select>
+                                Date
                         <input className="form-control form-control-sm" onChange={this.getFreeAppointmentTime} ref={(ref) => this.Datum = ref} placeholder="Date" type="date" />
-                        <br />
-                        {this.state.sati === null ?
-                            <div>   <br /><Spinner /><center className="text-success">Loading Avialible Time...</center></div>
-                            :
-                            <div ref={(ref) => this.Time = ref}> {this.state.timeMessage}
-                                {this.state.sati.map((item, index) =>
-                                    <div key={index} style={{ float: "left", marginLeft: "10px", width: "40%" }} >
-                                        <input type="radio" name="time" onClick={() => { this.selectTime(item) }} />
-                                        <span className="text-success">   {'   ' + item + ' : 00'}</span>
-                                    </div>
-                                )}</div>
+                                <br />
+                                {this.state.sati === null ?
+                                    <div>   <br /><Spinner /><center className="text-success">Loading Avialible Time...</center></div>
+                                    :
+                                    <div ref={(ref) => this.Time = ref}> {this.state.timeMessage}
+                                        {this.state.sati.map((item, index) =>
+                                            <div key={index} style={{ float: "left", marginLeft: "10px", width: "40%" }} >
+                                                <input type="radio" name="time" onClick={() => { this.selectTime(item) }} />
+                                                <span className="text-success">   {'   ' + item + ' : 00'}</span>
+                                            </div>
+                                        )}</div>
+                                }
 
-                        }
-
-                    </div>
+                            </div>
 
 
-                    <div className="col-sm-4">
-                        Additional information
+                            <div className="col-sm-4">
+                                Additional information
                         <textarea className="form-control form-control-sm" rows="4" ref={(ref) => this.Napomena = ref} placeholder="Aditional information" type="text" />
 
-                    </div>
-                </div>
-                <hr />
-                <button type="submit" className="btn btn-primary btn-block" onClick={this.spasiTermin} disabled={this.state.disableSave}  >Save</button>
-
+                            </div>
+                        </div>
+                        <hr />
+                        <button type="submit" className="btn btn-primary btn-block" onClick={this.spasiTermin} disabled={this.props.success}  >Save</button>
+                    </div>}
             </div>
         );
     }
 }
+//export default AppointmentAdd;
+const mapStateToProps = state => ({
+    errors: state.errors,
+    success: state.appointments.succesPost,
+    usersShortList: state.users.usersShortList
+});
 
-export default AppointmentAdd;
+export default connect(mapStateToProps, { addAppointment, setAppointmentsAddSuccess, getUsersShort })(AppointmentAdd);

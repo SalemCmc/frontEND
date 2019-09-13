@@ -103,9 +103,8 @@ class AppointmentPanelClient extends Component {
         </div>
 
         <div className="custtitlebox">
-          <h4>Your Appointments</h4>
+          <h4 className="text-muted">Your Appointments</h4>
           <Link to="#" onClick={this.rezervisiTermin}>Book Appointment</Link>
-
         </div>
 
 

@@ -38,9 +38,8 @@ class Notifications extends Component {
   }
 
 
-  componentDidMount() 
-  {
- 
+  componentDidMount() {
+
     if (this.props.history.action === "POP" && this.props.notifications.items.length > 0 && this.props.notifications.searchParams !== {}) {
       //  console.log(" B A C K!"); // do nothing!  FIX LATER...
     }
@@ -54,8 +53,7 @@ class Notifications extends Component {
   }
 
 
-  async searchObavjest(sstring, sdate)
-  {
+  async searchObavjest(sstring, sdate) {
     await this.setState({ searchString: sstring, searchDate: sdate, row: 0, pn: 1 });
     this.getObavjest();
   }
@@ -67,7 +65,7 @@ class Notifications extends Component {
     searchParam.row = this.state.row;
     searchParam.limit = this.state.limit;
     searchParam.pageNumber = this.state.pn;
-   
+
     await this.props.getNotifications(searchParam);  // load from DB and insert in the store (redux)
 
   }
@@ -95,7 +93,7 @@ class Notifications extends Component {
   }
 
   render() {
- 
+
 
     return (
 
@@ -107,7 +105,7 @@ class Notifications extends Component {
 
         <div className="custtitlebox">
           <Search search={this.searchObavjest} searchParams={this.props.notifications.searchParams} sstring="true" sdate="true" scheck="false" sradio="false" />
-          <h4 >Notifications</h4>
+          <h4 className="text-muted" >Notifications</h4>
           {this.props.auth.user.rola === "Admin" || this.props.auth.user.rola === "Doctor" ?
             <Link to="#" className="card-link" onClick={this.addNewItemtModal} > Add Notification </Link>
             : null}

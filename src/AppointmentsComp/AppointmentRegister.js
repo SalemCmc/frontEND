@@ -1,19 +1,22 @@
 import React, { Component } from 'react';
 //import { getTerminDetails, getCommonApi,  getPacijentiByVlasnikIDshort, postUsluga } from '../WebApi';
 // , postUsluga,postDijagnoza, postTerapija,postLijek, setObavljenTermin koriste se kod .asp.net API
-import { EvidentirajTermin, getCommonApi, getPacijentiByVlasnikShort } from "../WebApis/requestsGraphQL.js";
+import { getCommonApi, getPacijentiByVlasnikShort } from "../WebApis/requestsGraphQL.js";
 import { Link } from 'react-router-dom';
 import dijagnoza from '../Icons/dijagnoza.jpg';
 import lekovi from '../Icons/lekovi.jpg';
 import pregled from '../Icons/pregled.jpg';
+// REDUX:
+import { connect } from 'react-redux';
+import { registerAppointment, setAppointmentsAddSuccess } from '../actions/appointmentsActions';
 
 class AppointmentRegister extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pacijenti: [], vrsteUsluge: [], lijekovi: [], showPanelAt: ["", "hidde", "hidde"]
-            , showMedicamentErrorAlert: false, showErrorAlert: false, showSuccessAlert: false, alertMessage: ""
+            pacijenti: [], vrsteUsluge: [], lijekovi: [], showPanelAt: ["", "hidde", "hidde"], showMedicamentErrorAlert: false
         };
+
 
         this.loadInitialData = this.loadInitialData.bind(this);  // povuci iz baze pacijente i vrste usluge!
         this.loadInitialData();
@@ -22,14 +25,17 @@ class AppointmentRegister extends Component {
         this.spasiUslugu = this.spasiUslugu.bind(this);
         this.validirajLijek = this.validirajLijek.bind(this);
     }
+    componentDidMount() {
+
+        this.props.setAppointmentsAddSuccess(false);
+    }
+
+
+
     async loadInitialData() {
 
-        //console.log("this.props.vlasnikID :", this.props.vlasnikID);
         var VU = await getCommonApi("Usluge");
-        //  var TE = await getTerminDetails(this.props.id);
-        //  var P = await getPacijentiByVlasnikIDshort(this.props.vlasnikID);
         var P = await getPacijentiByVlasnikShort(this.props.vlasnikID);
-        console.log("Vrsta usluge je :", VU);
 
         this.setState({ pacijenti: P, vrsteUsluge: VU });
 
@@ -44,7 +50,7 @@ class AppointmentRegister extends Component {
 
         return valid;
     }
-    ///  treba povuci termin iz baze i pokupiti mu vlasnika i pacijente....
+
     async spasiUslugu() {
         //console.log("VRSTA USLUGE:", this.Usluga.value);
         if (!this.validirajUslugu()) {
@@ -93,15 +99,7 @@ class AppointmentRegister extends Component {
 
         //console.log("objekat za insert: ", objectForInsert);
 
-
-        // postUsluga(objectForInsert);
-
-
-        EvidentirajTermin(objectForInsert);
-        // obavi refresh!
-
-        this.setState({ showSuccessAlert: true, alertMessage: "You successfully save data." });
-        this.props.refreshParent();
+        this.props.registerAppointment(objectForInsert);
 
     }
     validirajUslugu() {
@@ -162,6 +160,7 @@ class AppointmentRegister extends Component {
     }
 
     render() {
+        console.log("PET LEN: ", this.state.pacijenti.length);
 
         let medicalServicePanel = null;
         let diagnosisTherapyPanel = null;
@@ -172,10 +171,10 @@ class AppointmentRegister extends Component {
             <div className={this.state.showPanelAt[0]}>
                 <img src={pregled} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
                 <center> <h5 className="text-muted">Medical service</h5></center>
+                {this.state.pacijenti.length < 1 ? <center><p className="text-danger">This client doesn't own any pet, please add pet first.</p></center> : ""}
                 <div className="breadcrumb">
-
                     Pet *
-                <select className="form-control form-control-sm" ref={(ref) => this.Pacijent = ref}>
+                    <select className="form-control form-control-sm" ref={(ref) => this.Pacijent = ref}>
                         <option value="">choose pet</option>
                         {this.state.pacijenti.map(opt => { return (<option ref={(ref) => this.PacijentID = ref} key={opt._id} value={opt._id}>{opt.Ime}</option>); })}
                     </select>
@@ -249,9 +248,9 @@ class AppointmentRegister extends Component {
 
         return (
             <div className="" >
-                {this.state.showSuccessAlert === true ?
+                {this.props.appointments.succesPost === true ?
                     <div className="alert alert-dismissible alert-success">
-                        <strong>Well done!</strong> {this.state.alertMessage}
+                        <strong>Well done!</strong> Data saved.
                     </div>
                     :
                     <div>
@@ -263,15 +262,14 @@ class AppointmentRegister extends Component {
 
                         {medicalServicePanel}
                         {diagnosisTherapyPanel}
-
                         {medicamentsPanel}
 
                         <hr />
                         <button type="submit" className="btn btn-primary btn-block" onClick={this.spasiUslugu} >Save</button>
                     </div>}
-                {this.state.showErrorAlert === true ?
+                {this.props.errors.error === true ?
                     <div className="alert alert-dismissible alert-danger">
-                        <strong>Oh snap!</strong> {this.state.alertMessage}
+                        <strong>Oh snap!</strong> {this.props.errors.errorMessage}
                     </div>
                     : ""}
 
@@ -280,5 +278,10 @@ class AppointmentRegister extends Component {
         );
     }
 }
-//Modal.propTypes = {  onClose: PropTypes.func.isRequired,  show: PropTypes.bool,  children: PropTypes.node};
-export default AppointmentRegister;
+//export default AppointmentRegister;
+const mapStateToProps = state => ({
+    errors: state.errors,
+    appointments: state.appointments
+});
+
+export default connect(mapStateToProps, { registerAppointment, setAppointmentsAddSuccess })(AppointmentRegister);
