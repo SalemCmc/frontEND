@@ -1,10 +1,8 @@
 
 
 import React, { Component } from 'react';
-//import { getTerminiByKlijent,ukloniTermin} from '../WebApi';
-import { getTerminiByKlijent, ukloniTermin } from "../WebApis/requestsGraphQL.js";
-import { connect } from 'react-redux';
-import { loginUser } from '../actions/authActions';
+
+
 import AppointmentAdd from './AppointmentAdd';
 import Modal from '../CommonComponents/Modal';
 import Pagination from "react-js-pagination";
@@ -12,25 +10,37 @@ import AppointmentDetails from './AppointmentDetails';
 import Spinner from '../CommonComponents/Spinner'
 import { Link } from 'react-router-dom'
 import Confirm from "../CommonComponents/Confirm"
-
+// REDUX
+import { connect } from 'react-redux';
+//import { loginUser } from '../actions/authActions';
+import { getAppointmentsByClient, handleAppointmentsModal, removeAppointment } from '../actions/appointmentsActions';
 
 
 class AppointmentPanelClient extends Component {
   constructor(props) {
     super(props);
-    this.state = { TerminiList: [], row: 0, limit: 6, Count: 0, showModal: false, modalTitle: "" };
+    this.state = { row: 0, limit: 6, showModal: false, modalTitle: "" };
+
     this.loadTermini = this.loadTermini.bind(this);
     this.loadTermini();
     this.rezervisiTermin = this.rezervisiTermin.bind(this);
     this.handlePageChange = this.handlePageChange.bind(this);
-    // this.ukloniTermin = this.ukloniTermin.bind(this); 
+    this.ukloniTermin = this.ukloniTermin.bind(this);
 
   }
-  /// get klijent termins:  https://vet-ord-api.herokuapp.com/api/termini/getTerminiByKlijent/5cb4b4944908b91fe4d7ed53
+
 
   async loadTermini() {
-    let T = await getTerminiByKlijent(this.props.auth.user.id, this.state.row.toString(), this.state.limit.toString());
-    this.setState({ TerminiList: T.Termini, Count: T.Count });
+
+    let searchParams = {};
+    searchParams.row = this.state.row;
+    searchParams.limit = 6;
+    searchParams.pageNumber = this.state.pn;
+    this.props.getAppointmentsByClient(searchParams);
+
+    //let T = await getTerminiByKlijent(this.props.auth.user.id, this.state.row.toString(), this.state.limit.toString());
+    console.log("TERMINI:");
+    //this.setState({ TerminiList: T.Termini, Count: T.Count });
 
 
   }
@@ -47,12 +57,12 @@ class AppointmentPanelClient extends Component {
     this.loadTermini();
   }
   showDetails(ID) {
-
+    this.props.handleAppointmentsModal("DETAILS", ID, null);
     this.setState({ idTermin: ID, showModal: true, action: "INFO", modalTitle: "Details" });
   }
 
 
-  hideModal = () => { this.setState({ showModal: false, modalTitle: "" }); this.loadTermini() };
+  hideModal = () => { this.setState({ showModal: false, modalTitle: "" }); };
   getDay(date1) {
     let dat = new Date(date1);
     let day = dat.getDate();
@@ -76,22 +86,24 @@ class AppointmentPanelClient extends Component {
     return dat.getFullYear();
 
   }
-  showModalConfirm(id) {
-    this.setState({ idTermin: id, showModal: true, action: "UKLONI", modalTitle: "Confirm Deletion!" });
+  async showModalConfirm(id) {
+    console.log("ID KLIK: ", id);
+    await this.setState({ idTermin: id, showModal: true, action: "UKLONI", modalTitle: "Confirm Deletion!" });
   }
-  async ukloniTermin() {
-
-    await ukloniTermin(this.state.idTermin);
-    this.setState({ TerminiList: [] });
-    this.loadTermini();
+  ukloniTermin() {
+    this.setState({ showModal: false });
+    this.props.removeAppointment(this.state.idTermin);
+    /*     await ukloniTermin(this.state.idTermin);
+        
+        this.loadTermini(); */
 
 
   }
   render() {
-    console.log("STATE: ", this.state);
+    console.log("RENDER pageNumber: ", this.props.pageNumber);
     let childComponent = null;
 
-    if (this.state.action === "INFO") { childComponent = <AppointmentDetails id={this.state.idTermin} />; }
+    if (this.state.action === "INFO") { childComponent = <AppointmentDetails />; }
     if (this.state.action === "REZERVISI") { childComponent = <AppointmentAdd refreshParent={this.loadTermini} idKlijent={this.props.auth.user.id} />; }
     if (this.state.action === "UKLONI") { childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>; }
     return (
@@ -109,10 +121,10 @@ class AppointmentPanelClient extends Component {
 
 
 
-        {this.state.TerminiList.length < 1 ?
+        {this.props.loading === true ?
           <Spinner />
           :
-          this.state.TerminiList.map((item, index) =>
+          this.props.items.map((item, index) =>
 
             <div className="card mb-3" key={index} style={{ width: '32%', float: 'left', margin: '0.5%' }}>
 
@@ -145,11 +157,9 @@ class AppointmentPanelClient extends Component {
 
           )}
 
-
-
         <div className="custpaging">
-          <Pagination activePage={this.state.pn} itemsCountPerPage={6} onChange={this.handlePageChange}
-            totalItemsCount={this.state.Count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
+          <Pagination activePage={this.props.pageNumber} itemsCountPerPage={6} onChange={this.handlePageChange}
+            totalItemsCount={this.props.count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
             linkClass="" activeLinkClass="" activeClass="page-item active" disabledClass="text-secondary" firstPageText="first" lastPageText="last" nextPageText=">" prevPageText="<"
           />
         </div>
@@ -161,7 +171,11 @@ class AppointmentPanelClient extends Component {
 // export default Login;
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  items: state.appointments.appoByClient.items,
+  count: state.appointments.appoByClient.count,
+  loading: state.appointments.loading,
+  pageNumber: state.appointments.searchParams.pageNumber
 });
 
-export default connect(mapStateToProps, { loginUser })(AppointmentPanelClient);
+export default connect(mapStateToProps, { getAppointmentsByClient, handleAppointmentsModal, removeAppointment })(AppointmentPanelClient);

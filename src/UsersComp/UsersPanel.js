@@ -83,7 +83,7 @@ class UsersPanel extends Component {
           <Link to="/UserAdd/registration">Add new user</Link>
         </div>
 
-
+       
         {this.props.errors.error === true ?
           <Error message={this.props.errors.errorMessage.toString()} />
           : null}
@@ -116,7 +116,7 @@ class UsersPanel extends Component {
             </div>
 
           )}
-
+  
 
         <div className="custpaging">
 

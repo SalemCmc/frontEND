@@ -152,7 +152,7 @@ export async function getKorisniciShort(searchString, role) {
 
 
 export async function getAppointments(id, row) {
-  console.log("ROW:", row);
+
   const query = `query getApp( $id: ID! , $row: String)
                               {getAppointmentsList(id:$id, row:$row)
                               {id Done Doctor Client Date Time DoctorID ClientID}}                 
@@ -166,10 +166,10 @@ export async function getAppointments(id, row) {
 
 
 export async function getTerminiByKlijent(id, row, limit) {
-  console.log("ROW:", row); console.log("lim:", limit);
+
   const query = `query getTermByKl( $id: ID! , $row: String, $limit:String)
                                   {getTerminiByKlijent(id: $id, row:$row, limit:$limit)
-                                  {Count: count Termini:items{ID Date Vrijeme Doktor Vlasnik VlasnikID Obavljen}}
+                                  {count items{ID Date Vrijeme Doktor Vlasnik VlasnikID Obavljen}}
                                   }`;
 
   let resp = await graphqlRequest(query, { id, row, limit });

@@ -36,6 +36,7 @@ class ContactsPanel extends Component {
     return (
       <div className="">
         <div className="custtitlebox"> <h4 className="text-muted">Our Contacts</h4></div>
+        <div className="custcontent">
         <div style={{ height: '50vh', width: '100%', boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)' }}>
           <GoogleMapReact defaultCenter={this.props.center} defaultZoom={this.props.zoom} bootstrapURLKeys={{ key: "" }} >
             {this.props.contacts.contactsList.map(item =>
@@ -45,7 +46,6 @@ class ContactsPanel extends Component {
         </div>
 
         <div className="col-container">
-
           {this.props.contacts.contactsList.map((item, index) =>
             <div key={index} className="custcard">
               <br />
@@ -59,7 +59,7 @@ class ContactsPanel extends Component {
             </div>
           )}
         </div>
-      </div>
+      </div></div>
 
     );
   }

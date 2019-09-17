@@ -26,23 +26,27 @@ class PriceList extends Component {
         }
         else {
             showList =
-                <div><div className="custtitlebox"> <h4 className="text-muted">Price list</h4></div>
-                    <div className="leftnavitem">
+                   <div className="custcontent">
+                    <div className="custbodyconttent">
                         <table className="table table-hover">
-                            <thead><tr className="table-info"><th>Service</th><th>Price</th></tr></thead>
+                            <thead><tr className="table-secondary"><th>Service</th><th>Price</th></tr></thead>
+                           
                             <tbody>
                                 {this.props.price.priceList.map((item, index) =>
                                     <tr key={index}><td>{item.Service}</td><td>{item.Price + ' KM'}</td></tr>
                                 )}
                             </tbody>
-                        </table> <br /><br /><br />
-                        <p><small>Value-added tax is included in price.</small></p>
-                    </div></div>;
+                        </table> <br /><br />
+                         <p><small>&nbsp;&nbsp;Value-added tax is included in price.</small></p>
+                   </div> </div>;
         }
         return (
-            <div className="" >
+            <div ><div className="custtitlebox"> <h4 className="text-muted">Price list</h4></div>
+
+
+
                 {showList}
-            </div>
+                </div>
         );
     }
 }

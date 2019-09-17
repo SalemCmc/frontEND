@@ -7,6 +7,7 @@ import avatarDefault from '../CommonComponents/avatarDefault.jpg'
 //REDUX:
 import { connect } from 'react-redux';
 import { getUserByID, updateUser } from '../actions/usersActions';
+
 //import { getCommonData } from '../actions/commonActions';
 
 import { getCommonApi } from "../WebApis/requestsGraphQL.js";

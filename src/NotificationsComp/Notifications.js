@@ -110,13 +110,10 @@ class Notifications extends Component {
             <Link to="#" className="card-link" onClick={this.addNewItemtModal} > Add Notification </Link>
             : null}
         </div>
-
+        <div className="custcontent">
         {this.props.errors.error === true ?
           <Error message={this.props.errors.errorMessage.toString()} />
           : null}
-
-
-
         {this.props.notifications.loading === true ?
           <Spinner />
           :
@@ -146,7 +143,7 @@ class Notifications extends Component {
         }
 
 
-
+</div>
         <div className="custpaging">
           <Pagination activePage={this.props.notifications.searchParams.pageNumber} itemsCountPerPage={5} onChange={this.handlePageChange}
             totalItemsCount={this.props.notifications.count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"

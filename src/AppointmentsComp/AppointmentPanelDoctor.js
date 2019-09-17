@@ -16,98 +16,102 @@ import Modal from '../CommonComponents/Modal';
 
 // REDUX:
 import { connect } from 'react-redux';
-import { getAppointmentsByDoctor, removeAppointment } from '../actions/appointmentsActions';
+import { getAppointmentsByDoctor, removeAppointment, handleAppointmentsModal } from '../actions/appointmentsActions';
 
 class AppointmentPanelDoctor extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      TerminiList: [], currentDate: (new Date(new Date().getFullYear(), new Date().getMonth(),
-        new Date().getDate() - new Date().getDay() + 1)),  // ovo je ponedeljak!
-      action: "", showModal: false, modalTitle: "", weekAction: null
-    };
-    this.loadTermini = this.loadTermini.bind(this);
-    this.loadTermini();
+    this.state = { showModal: false, modalTitle: "", modalComponent: null };
+
+
     this.onClickAction = this.onClickAction.bind(this);
-    this.nextWeek = this.nextWeek.bind(this);
-    this.prevWeek = this.prevWeek.bind(this);
     this.rezervisiTermin = this.rezervisiTermin.bind(this);
     this.ukloniTermin = this.ukloniTermin.bind(this);
   }
 
+  componentDidMount() {
 
-
-  async loadTermini() {
-
-    let dt = this.state.currentDate;
-
-    let searchParams = {};
-    searchParams.doctorID = this.props.auth.user.id;
-    searchParams.date = dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
-    searchParams.weekAction = this.state.weekAction;
-    await this.props.getAppointmentsByDoctor(searchParams);  // REDUX
-
-  }
-
-  async nextWeek() {
-    var newDate = new Date(this.state.currentDate);
-    newDate.setDate(newDate.getDate() + 7);
-    await this.setState({ currentDate: newDate, weekAction: "next" });
-    this.loadTermini();
-  }
-  async prevWeek() {
-    var newDate = new Date(this.state.currentDate);
-    newDate.setDate(newDate.getDate() - 7);
-    await this.setState({ currentDate: newDate, weekAction: "previous" });
-    this.loadTermini();
-  }
-  async ukloniTermin() {
-
-    this.props.removeAppointment(this.state.idTermin, "Doctor");
-    this.setState({ showModal: false, modalTitle: "" });
-  }
-
-
-  onClickAction(action, id, klijentID) {//poziva se iz subkomponente rowCell kao parametar salje akciju (obrisi termin, evidentiraj, info itd...)
-    //console.log("action: ", action); console.log("klijentID: ", klijentID);
-    switch (action) {
-      case 'UKLONI': return this.setState({ idTermin: id, showModal: true, action: "UKLONI", modalTitle: "Confirm Deletion!" }); //this.ukloniTermin(id);
-      case 'INFO': return this.setState({ idTermin: id, showModal: true, action: "INFO", modalTitle: "Details" });
-      case 'RACUN': return alert("Under construction!!");
-      case 'EVIDENTIRAJ': return this.setState({ idTermin: id, showModal: true, action: "EVIDENTIRAJ", vlasnikID: klijentID, modalTitle: "Register Medical Service" });
-      default: return null;
+    if (this.props.appointments.appoByDoctorList[1].length < 1) {
+      this.loadTermini(null);
     }
   }
 
-  rezervisiTermin() {  // otvaranje modalnog prozora za rezervisanje termina
-    this.setState({ showModal: true, action: "REZERVISI", modalTitle: "Book Appointment" });
+  async loadTermini(action) {
+    await this.props.getAppointmentsByDoctor(action);  // REDUX
+  }
+  async ukloniTermin() {
+    this.props.removeAppointment(this.state.selectedApoID, "Doctor");
+    this.hideModal();
 
   }
-  //  hideModal = () => { this.setState({ showModal: false }); this.loadTermini() };
-  hideModal = () => { this.setState({ showModal: false }); };
+
+  onClickAction(action, id, klijentID) {//poziva se iz subkomponente rowCell kao parametar salje akciju (obrisi termin, evidentiraj, info itd...)
+
+    let childComponent = null;
+    let modalTitle = "";
+
+    if (action === "DETAILS") {
+      childComponent = <AppointmentDetails />;
+      modalTitle = "Appointment Details";
+    }
+    if (action === "REMOVE") {
+      childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>;
+      modalTitle = "Confirm Deletion!";
+    }
+    if (action === "REGISTER") {
+      childComponent = <AppointmentRegister appointmentID={id} vlasnikID={this.state.vlasnikID} refreshParent={this.loadTermini} />;
+      modalTitle = "Register Medical Service";
+    }
+
+
+    this.setState({ showModal: true, modalTitle: modalTitle, modalComponent: childComponent, selectedApoID: id });
+    this.props.handleAppointmentsModal(action, id, klijentID);  // REDUX PREIMENUJ U LOAD MODAL DATA!
+  }
+
+  rezervisiTermin() {  // otvaranje modalnog prozora za rezervisanje termina
+    let childComponent = null;
+    let modalTitle = "";
+    childComponent = <AppointmentAdd idKlijent={null} />;
+    modalTitle = "Book Appointment";  // NEMOJ ZVATI REDUX!
+    this.setState({ showModal: true, modalTitle: modalTitle, modalComponent: childComponent });
+    // this.props.handleAppointmentsModal("BOOK_APO");
+  }
+
+  hideModal = () => {
+    // this.props.handleAppointmentsModal("HIDE");
+    this.setState({ showModal: false, modalTitle: "", modalComponent: null });
+  };
 
   getDayDate(day) // generise string za header kolone u tabeli ispod  Mart 22, Jun 12 itd...
   {
-    var newDate = new Date(this.state.currentDate);
+    var newDate = new Date(this.props.appointments.currentWeek);
     newDate.setDate(newDate.getDate() + day);
     return newDate.toLocaleString('en-us', { month: 'short', day: 'numeric' });
   }
+  generateWeekString() {
+
+    let fromDate = new Date(this.props.appointments.currentWeek);
+    let toDate = new Date(this.props.appointments.currentWeek);
+    toDate = new Date(toDate.setDate(toDate.getDate() + 4));
+    return fromDate.toLocaleString('en-us', { day: 'numeric', month: 'short' }) + ' - ' + toDate.toLocaleString('en-us', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
 
   render() {
-    let childComponent = null;
-    if (this.state.action === "INFO") { childComponent = <AppointmentDetails id={this.state.idTermin} />; }
-    if (this.state.action === "EVIDENTIRAJ") { childComponent = <AppointmentRegister id={this.state.idTermin} vlasnikID={this.state.vlasnikID} refreshParent={this.loadTermini} />; }
-    if (this.state.action === "REZERVISI") { childComponent = <AppointmentAdd idKlijent={null} />; }
-    if (this.state.action === "UKLONI") { childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>; }
+    // console.log("STATE: ", this.state);
+    let childComponent = this.state.modalComponent;
 
-
-    return ( 
+    // console.log("MODAL PROPS:", this.props.appointments.showModal);
+    return (
       <div className="" >
+
         <div>
           <Modal show={this.state.showModal} handleClose={this.hideModal} title={this.state.modalTitle}>
             <div> {childComponent}  </div>
           </Modal>
         </div>
+
+
+
 
         <div className="custtitlebox">
           <h4 className="text-muted">Weekly Appointment Schedule</h4>
@@ -116,16 +120,20 @@ class AppointmentPanelDoctor extends Component {
 
 
 
+        <div className="custcontent">
 
+        
         <div className="custbodyconttent">
 
           <div className="appotblheader">
             <div className="btn-group" >
-              <h4 >{'Week: ' + this.getDayDate(0) + ' - ' + this.getDayDate(4)}</h4> &emsp;&emsp;
+
+              <h4 >{'Week: ' + this.generateWeekString()}</h4>
+              &emsp;&emsp;
 
             <div className="" >
-                <button type="button" className="btn btn-success btn-sm" onClick={this.prevWeek}>  ❮ &nbsp;</button>&emsp;
-                <button type="button" className="btn btn-success btn-sm" onClick={this.nextWeek}>  &nbsp; ❯  </button>
+                <button type="button" className="btn btn-success btn-sm" onClick={() => this.loadTermini("previous")}>  ❮ &nbsp;</button>&emsp;
+                <button type="button" className="btn btn-success btn-sm" onClick={() => this.loadTermini("next")}>  &nbsp; ❯  </button>
               </div>
             </div>
 
@@ -154,6 +162,7 @@ class AppointmentPanelDoctor extends Component {
             </table>}
 
         </div>
+        </div>
       </div>
 
     );
@@ -161,8 +170,8 @@ class AppointmentPanelDoctor extends Component {
 }
 //export default Termini;
 const mapStateToProps = state => ({
-  auth: state.auth,
+  //auth: state.auth,
   appointments: state.appointments
 });
 
-export default connect(mapStateToProps, { getAppointmentsByDoctor, removeAppointment })(AppointmentPanelDoctor);
+export default connect(mapStateToProps, { getAppointmentsByDoctor, removeAppointment, handleAppointmentsModal })(AppointmentPanelDoctor);

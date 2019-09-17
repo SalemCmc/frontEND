@@ -1,94 +1,132 @@
 
 
 import store from '../store';
-import { GET_DOCTOR_APPOINTMENTS, APPOINTMENTS_LOADING, SET_APPOINTMENTS_ADD_SUCCESS, GET_ERRORS, CLEAR_ERRORS } from './types';
-import { getTerminiByDoktor, ukloniTermin, PostTermin, evidentirajTermin } from "../WebApis/requestsGraphQL.js";
+import { GET_DOCTOR_APPOINTMENTS, GET_CLIENT_APPOINTMENTS, APPOINTMENTS_LOADING, APPOINTMENTS_MODAL_LOADING, GET_DETAILS_APPOINTMENT, GET_REGISTER_APPOINTMENT, SET_APPOINTMENTS_MODAL_ERROR, SET_APPOINTMENTS_ADD_SUCCESS, GET_ERRORS, CLEAR_ERRORS } from './types';
+import { getTerminiByDoktor, getTerminiByKlijent, ukloniTermin, PostTermin, evidentirajTermin, getTerminDetails, getCommonApi, getPacijentiByVlasnikShort } from "../WebApis/requestsGraphQL.js";
 
-export const getAppointmentsByDoctor = appoParams => async dispatch => {
-    
+
+function formatDate(dt)  // IN JS something is totaly wrong with date format, this function is mandatory!!!
+{
+    return dt.getFullYear() + "-" + (dt.getMonth() + 1) + "-" + dt.getDate();
+}
+
+export const getAppointmentsByClient = (searchParams) => async dispatch => {
+    let clientID = store.getState().auth.user.id;
     dispatch(setAppointmentsLoading(true));
-    let newDate = new Date(appoParams.date);
-    let newDate2 = new Date(appoParams.date);
-    let pWeek = new Date(newDate.setDate(newDate.getDate() - 7));
-    let ntWeek = new Date(newDate.setDate(newDate2.getDate() + 7));
-    let prevWeek = pWeek.getFullYear() + "-" + (pWeek.getMonth() + 1) + "-" + pWeek.getDate();
-    let nextWeek = ntWeek.getFullYear() + "-" + (ntWeek.getMonth() + 1) + "-" + ntWeek.getDate();
+    getTerminiByKlijent(clientID, searchParams.row.toString(), searchParams.limit.toString())
+        .then(response => {
+            console.log("TERMINI akcija:", response);
+            dispatch({
+                type: GET_CLIENT_APPOINTMENTS,
+                appoByClient: response,
+                searchParams: searchParams
+            })
+
+        }
+        )
+        .catch(err => { dispatch({ type: GET_ERRORS, payload: err.message.toString() }) });
+
+
+}
+
+export const getAppointmentsByDoctor = weekAction => async dispatch => {
+
+    dispatch(setAppointmentsLoading(true));
     let currentappoByDoctorList = store.getState().appointments.appoByDoctorList;
-   
-   
-    // 0. if update after add new element
-   if (appoParams.weekAction === "update") 
-   {
-    currentappoByDoctorList[1] = await getAppointmentsFromAPI(appoParams.doctorID, appoParams.date);
-    dispatch({
-        type: GET_DOCTOR_APPOINTMENTS,
-        appoByDoctorList: currentappoByDoctorList,
-        appoParams: appoParams
-    })
-   }
-   
+    let currentMonday = new Date(store.getState().appointments.currentWeek);
+    let doctorID = store.getState().auth.user.id;
+
+
     //1.     CASE 1: get current week (initial)
+    if (weekAction === null) {
 
-    if (appoParams.weekAction === null) {
-      
-        currentappoByDoctorList[1] = await getAppointmentsFromAPI(appoParams.doctorID, appoParams.date);
+        currentappoByDoctorList[1] = await getAppointmentsFromAPI(doctorID, formatDate(currentMonday));
         dispatch({
             type: GET_DOCTOR_APPOINTMENTS,
             appoByDoctorList: currentappoByDoctorList,
-            appoParams: appoParams
+            currentWeek: currentMonday
         })
-        // SET BUFFER (first and last element)
-        currentappoByDoctorList[0] = await getAppointmentsFromAPI(appoParams.doctorID, prevWeek);
-        currentappoByDoctorList[2] = await getAppointmentsFromAPI(appoParams.doctorID, nextWeek);
+
+        let pWeek = new Date(currentMonday);
+        let previousMonday = new Date(pWeek.setDate(pWeek.getDate() - 7));
+        let nWeek = new Date(currentMonday);
+        let nextMonday = new Date(nWeek.setDate(nWeek.getDate() + 7));
+
+        // SET BUFFER (get previuos and next week)
+        currentappoByDoctorList[0] = await getAppointmentsFromAPI(doctorID, formatDate(previousMonday));
+        currentappoByDoctorList[2] = await getAppointmentsFromAPI(doctorID, formatDate(nextMonday));
         dispatch({
             type: GET_DOCTOR_APPOINTMENTS,
             appoByDoctorList: currentappoByDoctorList,
-            appoParams: appoParams
+            currentWeek: currentMonday
         })
     }
+
     //2.     CASE 2: get next week (set buffer for other weeks)
-    if (appoParams.weekAction === "next") {
-                if(currentappoByDoctorList.length<3)
-                {// waith for code below
-                    return;
-                }
+    if (weekAction === "next") {
 
-        currentappoByDoctorList.shift();
+        if (currentappoByDoctorList.length < 3) // IF array is not full waith.
+        {
+            return;
+        }
+
+        currentappoByDoctorList.shift();// remove first element form array  
+
+        let cWeek = new Date(currentMonday);
+        let currMonday = new Date(cWeek.setDate(cWeek.getDate() + 7));
+        let nWeek = new Date(currentMonday);
+        let nextMonday = new Date(nWeek.setDate(nWeek.getDate() + 14));
+
         dispatch({
             type: GET_DOCTOR_APPOINTMENTS,
             appoByDoctorList: currentappoByDoctorList,
-            appoParams: appoParams
+            currentWeek: currMonday
         })
-        currentappoByDoctorList[2] = await getAppointmentsFromAPI(appoParams.doctorID, nextWeek);
+
+        currentappoByDoctorList.push(await getAppointmentsFromAPI(doctorID, formatDate(nextMonday)));
         dispatch({
             type: GET_DOCTOR_APPOINTMENTS,
             appoByDoctorList: currentappoByDoctorList,
-            appoParams: appoParams
+            currentWeek: currMonday
         })
+
     }
-    if (appoParams.weekAction === "previous") {
-        if(currentappoByDoctorList.length>3)
-        {  // waith!
+    if (weekAction === "previous") {
+        if (currentappoByDoctorList.length > 3) {  // waith!
             return;
         }
         currentappoByDoctorList.unshift([]);
+        let cWeek = new Date(currentMonday);
+        let currMonday = new Date(cWeek.setDate(cWeek.getDate() - 7));
+        let pWeek = new Date(currentMonday);
+        let previousMonday = new Date(pWeek.setDate(pWeek.getDate() - 14));
+
         dispatch({
             type: GET_DOCTOR_APPOINTMENTS,
             appoByDoctorList: currentappoByDoctorList,
-            appoParams: appoParams
+            currentWeek: currMonday
         })
-        currentappoByDoctorList[0] = await getAppointmentsFromAPI(appoParams.doctorID, prevWeek);
+
+        currentappoByDoctorList[0] = await getAppointmentsFromAPI(doctorID, formatDate(previousMonday));
         currentappoByDoctorList.pop();
         dispatch({
             type: GET_DOCTOR_APPOINTMENTS,
             appoByDoctorList: currentappoByDoctorList,
-            appoParams: appoParams
+            currentWeek: currMonday
+        })
+    }
+    // 0. if update after add new element
+    if (weekAction === "update") {
+        // TO DO: check if inserting date == date from curent week and update.
+        currentappoByDoctorList[1] = await getAppointmentsFromAPI(doctorID, formatDate(currentMonday));
+        dispatch({
+            type: GET_DOCTOR_APPOINTMENTS,
+            appoByDoctorList: currentappoByDoctorList,
+            currentWeek: currentMonday
         })
     }
 
-
 };
-
 export const getAppointmentsFromAPI = (doctorID, date) => {
     return getTerminiByDoktor(doctorID, date).then(response => {
         return response;
@@ -96,24 +134,22 @@ export const getAppointmentsFromAPI = (doctorID, date) => {
     )
         .catch(err => { return []; });
 }
-
 export const addAppointment = (newAppointment, type) => async dispatch => {
-    
- 
 
 
- 
     PostTermin(newAppointment).then(async response => {
-     
+
         if (type === "Doctor") {
             dispatch(setAppointmentsAddSuccess(true));
             // PREPRAVITI DA ADD API VRACA OBJEKAT I NJEGA SAMO INSERTOVATI U LISTU! bez ponovnog poziva APIJA
-            let params = await store.getState().appointments.appoParams;
-            params.weekAction="update";
-            dispatch(getAppointmentsByDoctor(params));
+
+            dispatch(getAppointmentsByDoctor("update"));
         }
         else {
             //LOAD CLIENTS TERMINS! LATER
+            dispatch(setAppointmentsAddSuccess(true));
+            let params = store.getState().appointments.searchParams;
+            dispatch(getAppointmentsByClient(params));  // RELOAD
         }
     }
     )
@@ -123,14 +159,17 @@ export const addAppointment = (newAppointment, type) => async dispatch => {
         }
         );
 };
-
-
 export const removeAppointment = (ID, type) => async dispatch => {
 
+    console.log("UKLON ID:", ID);
     ukloniTermin(ID).then(response => {
-
+        console.log("UKLON resp:", response);
         if (type === "Doctor") {
             dispatch(removeDoctorsAppointments(ID));
+        }
+        else {
+            let params = store.getState().appointments.searchParams;
+            dispatch(getAppointmentsByClient(params));  // RELOAD
         }
     }
     )
@@ -164,7 +203,7 @@ export const removeDoctorsAppointments = (ID) => {
         return null;
     })
     appointments[1][rowIndex][cellIndex] = { _id: null, Datum: null, Vlasnik: null, VlasnikID: null, Vrijeme: null, Obavljen: null };
-    return { type: GET_DOCTOR_APPOINTMENTS, appoByDoctorList: appointments };
+    return { type: GET_DOCTOR_APPOINTMENTS, appoByDoctorList: appointments, currentWeek: store.getState().appointments.currentWeek };
 };
 export const registerAppointment = (appointment) => async dispatch => {
 
@@ -189,8 +228,49 @@ export const registerAppointment = (appointment) => async dispatch => {
     }
     )
         .catch(err => {
-
-            dispatch({ type: GET_ERRORS, payload: err.message.toString() })
+            dispatch({ type: SET_APPOINTMENTS_MODAL_ERROR, modalErrors: { error: true, errorMessage: err.message.toString() } });
+            // dispatch({ type: GET_ERRORS, payload: err.message.toString() })
         }
         );
+};
+
+/// MODALS ON Appo PANEL:
+export const handleAppointmentsModal = (type, appoID, ClientID) => dispatch => {
+
+
+    dispatch({ type: SET_APPOINTMENTS_MODAL_ERROR, modalErrors: { error: false, errorMessage: "" } });
+    dispatch({ type: APPOINTMENTS_MODAL_LOADING, load: true });
+
+    // DETAILS  (get all data and set in reducer , and show it  in component)
+    if (type === "DETAILS") {
+        getTerminDetails(appoID)
+            .then(resp => {
+
+                dispatch({ type: GET_DETAILS_APPOINTMENT, appoDetails: resp });
+            })
+            .catch(err => {
+                dispatch({ type: SET_APPOINTMENTS_MODAL_ERROR, modalErrors: { error: true, errorMessage: err.message.toString() } });
+            });
+    }
+
+    if (type === "REGISTER") {
+
+        getPacijentiByVlasnikShort(ClientID).then(pets => {
+
+            let medicalServices = store.getState().appointments.medicalServices;
+
+            if (medicalServices.length < 1) {
+                getCommonApi("Usluge").then(services => {
+
+                    dispatch({ type: GET_REGISTER_APPOINTMENT, medicalServices: services, pets: pets });
+                })
+                    .catch(err => { dispatch({ type: SET_APPOINTMENTS_MODAL_ERROR, modalErrors: { error: true, errorMessage: err.message.toString() } }); });
+            }
+            else {
+                dispatch({ type: GET_REGISTER_APPOINTMENT, medicalServices: medicalServices, pets: pets });
+            }
+        })
+            .catch(err => { dispatch({ type: SET_APPOINTMENTS_MODAL_ERROR, modalErrors: { error: true, errorMessage: err.message.toString() } }); });
+    }
+
 };

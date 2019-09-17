@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-//import { getTerminDetails, getCommonApi,  getPacijentiByVlasnikIDshort, postUsluga } from '../WebApi';
-// , postUsluga,postDijagnoza, postTerapija,postLijek, setObavljenTermin koriste se kod .asp.net API
-import { getCommonApi, getPacijentiByVlasnikShort } from "../WebApis/requestsGraphQL.js";
+
 import { Link } from 'react-router-dom';
 import dijagnoza from '../Icons/dijagnoza.jpg';
 import lekovi from '../Icons/lekovi.jpg';
 import pregled from '../Icons/pregled.jpg';
+import Spinner from '../CommonComponents/Spinner'
 // REDUX:
 import { connect } from 'react-redux';
 import { registerAppointment, setAppointmentsAddSuccess } from '../actions/appointmentsActions';
@@ -13,13 +12,9 @@ import { registerAppointment, setAppointmentsAddSuccess } from '../actions/appoi
 class AppointmentRegister extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            pacijenti: [], vrsteUsluge: [], lijekovi: [], showPanelAt: ["", "hidde", "hidde"], showMedicamentErrorAlert: false
-        };
+        this.state = { lijekovi: [], showPanelAt: ["", "hidde", "hidde"], showMedicamentErrorAlert: false };
 
 
-        this.loadInitialData = this.loadInitialData.bind(this);  // povuci iz baze pacijente i vrste usluge!
-        this.loadInitialData();
         this.addLijek = this.addLijek.bind(this);
         this.showPanelByIndex = this.showPanelByIndex.bind(this);
         this.spasiUslugu = this.spasiUslugu.bind(this);
@@ -32,14 +27,7 @@ class AppointmentRegister extends Component {
 
 
 
-    async loadInitialData() {
 
-        var VU = await getCommonApi("Usluge");
-        var P = await getPacijentiByVlasnikShort(this.props.vlasnikID);
-
-        this.setState({ pacijenti: P, vrsteUsluge: VU });
-
-    }
     validirajDijagnozu() {
         let valid = true;
         //this.Cijena.className = this.Usluga.className = this.PacijentID.className = this.Anamneza.className = "form-control form-control-sm";
@@ -69,7 +57,7 @@ class AppointmentRegister extends Component {
 
         let objectForInsert =
         {
-            TerminID: this.props.id,
+            TerminID: this.props.appointmentID,
             Dijagnoza: {},
             Terapija: {},
             Usluga: {
@@ -160,7 +148,7 @@ class AppointmentRegister extends Component {
     }
 
     render() {
-        console.log("PET LEN: ", this.state.pacijenti.length);
+        // console.log("APPO RENDER: ", this.props.appointments);
 
         let medicalServicePanel = null;
         let diagnosisTherapyPanel = null;
@@ -171,17 +159,17 @@ class AppointmentRegister extends Component {
             <div className={this.state.showPanelAt[0]}>
                 <img src={pregled} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
                 <center> <h5 className="text-muted">Medical service</h5></center>
-                {this.state.pacijenti.length < 1 ? <center><p className="text-danger">This client doesn't own any pet, please add pet first.</p></center> : ""}
+                {this.props.pets.length < 1 ? <center><p className="text-danger">This client doesn't own any pet, please add pet first.</p></center> : ""}
                 <div className="breadcrumb">
                     Pet *
                     <select className="form-control form-control-sm" ref={(ref) => this.Pacijent = ref}>
                         <option value="">choose pet</option>
-                        {this.state.pacijenti.map(opt => { return (<option ref={(ref) => this.PacijentID = ref} key={opt._id} value={opt._id}>{opt.Ime}</option>); })}
+                        {this.props.pets.map(opt => { return (<option ref={(ref) => this.PacijentID = ref} key={opt._id} value={opt._id}>{opt.Ime}</option>); })}
                     </select>
                     Type of medical service *
                 <select className="form-control form-control-sm" ref={(ref) => this.Usluga = ref}>
                         <option value="">choose type</option>
-                        {this.state.vrsteUsluge.map(opt => { return (<option key={opt._id} value={opt._id}>{opt.Value}</option>); })}
+                        {this.props.medicalServices.map(opt => { return (<option key={opt._id} value={opt._id}>{opt.Value}</option>); })}
                     </select>
                     Price *
                 <input className="form-control form-control-sm" ref={(ref) => this.Cijena = ref} placeholder="price (KM)" type="number" min="0" />
@@ -245,34 +233,38 @@ class AppointmentRegister extends Component {
 
 
 
-
+        console.log("state.appointments.modalErrors: ", this.props.errors);
         return (
             <div className="" >
-                {this.props.appointments.succesPost === true ?
-                    <div className="alert alert-dismissible alert-success">
-                        <strong>Well done!</strong> Data saved.
-                    </div>
+                {this.props.loading === true ?
+                    <Spinner />
                     :
-                    <div>
-                        <ul className="nav nav-tabs">
-                            <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 0)}><a className="nav-link active" data-toggle="tab" href="#jj" ref={(ref) => this.MedServiceTab = ref}>Medical Service *</a></li>
-                            <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 1)}><a className="nav-link" data-toggle="tab" href="#jj" ref={(ref) => this.DiagnosisTab = ref}>Diagnosis and Therapy </a></li>
-                            <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 2)}><a className="nav-link " data-toggle="tab" href="#jj" ref={(ref) => this.MedicamentsTab = ref}>Medicaments</a></li>
-                        </ul>
 
-                        {medicalServicePanel}
-                        {diagnosisTherapyPanel}
-                        {medicamentsPanel}
+                    this.props.succesPost === true ?
+                        <div className="alert alert-dismissible alert-success">
+                            <strong>Well done!</strong> Data saved.
+                    </div>
+                        :
+                        <div>
+                            <ul className="nav nav-tabs">
+                                <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 0)}><a className="nav-link active" data-toggle="tab" href="#jj" ref={(ref) => this.MedServiceTab = ref}>Medical Service *</a></li>
+                                <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 1)}><a className="nav-link" data-toggle="tab" href="#jj" ref={(ref) => this.DiagnosisTab = ref}>Diagnosis and Therapy </a></li>
+                                <li className="nav-item " onClick={this.showPanelByIndex.bind(this, 2)}><a className="nav-link " data-toggle="tab" href="#jj" ref={(ref) => this.MedicamentsTab = ref}>Medicaments</a></li>
+                            </ul>
 
-                        <hr />
-                        <button type="submit" className="btn btn-primary btn-block" onClick={this.spasiUslugu} >Save</button>
-                    </div>}
+                            {medicalServicePanel}
+                            {diagnosisTherapyPanel}
+                            {medicamentsPanel}
+
+                            <hr />
+                            <button type="submit" className="btn btn-primary btn-block" onClick={this.spasiUslugu} >Save</button>
+                        </div>}
                 {this.props.errors.error === true ?
                     <div className="alert alert-dismissible alert-danger">
                         <strong>Oh snap!</strong> {this.props.errors.errorMessage}
                     </div>
-                    : ""}
-
+                    : ""
+                }
 
             </div>
         );
@@ -280,8 +272,13 @@ class AppointmentRegister extends Component {
 }
 //export default AppointmentRegister;
 const mapStateToProps = state => ({
-    errors: state.errors,
-    appointments: state.appointments
+    errors: state.appointments.modalErrors,
+    succesPost: state.appointments.succesPost,
+    medicalServices: state.appointments.medicalServices,
+    pets: state.appointments.pets,
+    loading: state.appointments.loadingModal
+
+
 });
 
 export default connect(mapStateToProps, { registerAppointment, setAppointmentsAddSuccess })(AppointmentRegister);

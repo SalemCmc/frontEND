@@ -9,6 +9,7 @@ import AppointmentDetails from '../AppointmentsComp/AppointmentDetails';
 import { Link } from 'react-router-dom'
 //REDUX:
 import { connect } from 'react-redux';
+import { handleAppointmentsModal } from '../actions/appointmentsActions';
 
 class UserDetails extends Component {
   constructor(props) {
@@ -25,6 +26,8 @@ class UserDetails extends Component {
     let childComp = "";
     let modTitle = "";
     if (action === "TIMELINEDETAIL") {
+
+      this.props.handleAppointmentsModal("DETAILS", id);
       childComp = <AppointmentDetails id={id} />;
       modTitle = "Appointment Details";
     }
@@ -208,4 +211,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(mapStateToProps)(UserDetails);
+export default connect(mapStateToProps, {handleAppointmentsModal})(UserDetails,);

@@ -1,16 +1,24 @@
 
-import { GET_DOCTOR_APPOINTMENTS, SET_APPOINTMENTS_ADD_SUCCESS, APPOINTMENTS_LOADING } from '../actions/types';
+import { GET_DOCTOR_APPOINTMENTS,GET_CLIENT_APPOINTMENTS, SET_APPOINTMENTS_ADD_SUCCESS, APPOINTMENTS_LOADING, GET_DETAILS_APPOINTMENT, GET_REGISTER_APPOINTMENT, SET_APPOINTMENTS_MODAL_ERROR, APPOINTMENTS_MODAL_LOADING } from '../actions/types';
 
 const initialState = {
-    appoByDoctorList: [ [], [], []], // every item is one week (previous, current, next)
+    appoByDoctorList: [[], [], []], // every item is one week (previous, current, next)
+    appoByClient: {count: 0, items: []},
+    searchParams:{row:0, limit:0},
+    currentWeek: (new Date(new Date().setDate(new Date().getDate() - new Date().getDay() + 1))),  // INITIAL (THIS MONDAY)
+    loading: false,
 
+    // VARIABLES FOR MODALS...
 
-
-    //appoByDoctorList: [],
-    appoByClientList: [],
-    appoParams: {},
+    loadingModal: true,
     succesPost: false,
-    loading: false
+    modalErrors: { error: false, errorMessage: "" },
+    // DETAILS DATA
+    appoDetails: {},
+    //REGISTRATION DATA
+    pets: [],
+    medicalServices: [],
+
 };
 
 export default function (state = initialState, action) {
@@ -20,9 +28,8 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 appoByDoctorList: action.appoByDoctorList,
-                appoParams: action.appoParams,
+                currentWeek: action.currentWeek,
                 loading: false
-
             };
         case APPOINTMENTS_LOADING:
             return {
@@ -34,6 +41,38 @@ export default function (state = initialState, action) {
                 ...state,
                 succesPost: action.succesPost
             };
+        // MODALS: 
+
+        case APPOINTMENTS_MODAL_LOADING:
+            return {
+                ...state,
+                loadingModal: action.load
+            };
+        case GET_DETAILS_APPOINTMENT:
+            return {
+                ...state,
+                appoDetails: action.appoDetails,
+                loadingModal: false,
+            };
+        case SET_APPOINTMENTS_MODAL_ERROR:
+            return {
+                ...state,
+                modalErrors: action.modalErrors
+            };
+        case GET_REGISTER_APPOINTMENT:
+            return {
+                ...state,
+                loadingModal: false,
+                medicalServices: action.medicalServices,
+                pets: action.pets
+            };
+        case GET_CLIENT_APPOINTMENTS:
+                return {
+                    ...state,
+                    loading: false,
+                    appoByClient: action.appoByClient,
+                    searchParams: action.searchParams
+                };
         default:
             return state;
     }
