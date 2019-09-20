@@ -83,7 +83,7 @@ class UsersPanel extends Component {
           <Link to="/UserAdd/registration">Add new user</Link>
         </div>
 
-       
+        <div className="custcontent">
         {this.props.errors.error === true ?
           <Error message={this.props.errors.errorMessage.toString()} />
           : null}
@@ -91,7 +91,7 @@ class UsersPanel extends Component {
           <Spinner />
           :
           this.props.users.items.map(item =>
-
+<div className="conteiner25procent">
             <div className="custcard" key={item._id}>
               <div className="cardphoto">
                 <img src={item.Slika} alt="John" style={{ height: "100%", width: "100%", borderTopLeftRadius: '0.25rem', borderTopRightRadius: '0.25rem' }} />
@@ -114,9 +114,9 @@ class UsersPanel extends Component {
                 <Link to={`/UserDetails/${item._id}`}><h6>Details </h6></Link>
               </div>
             </div>
-
+            </div>
           )}
-  
+   </div>
 
         <div className="custpaging">
 

@@ -135,7 +135,7 @@ class MessagesPanel extends Component {
         <div className="custtitlebox">
           <h4 className="text-muted">Messages</h4>
         </div>
-
+        <div className="custcontent">
         <div className="leftnavipanel">
           <div className="messagesearchelem">
             <ul className="nav nav-tabs">
@@ -176,9 +176,7 @@ class MessagesPanel extends Component {
 
           </div>
         </div>
-        
-       
-       
+      
         {this.state.showMsgBlock === true ?
           <div className="messageListConteiner">
 
@@ -212,6 +210,7 @@ class MessagesPanel extends Component {
             <textarea className="form-control form-control-sm" rows="3" ref={(ref) => this.Message = ref} onKeyDown={this.sendMessage} placeholder="your message" type="text" />
           </div>
           : ""}
+      </div> 
       </div> 
     );
   }

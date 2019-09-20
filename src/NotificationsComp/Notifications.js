@@ -119,7 +119,7 @@ class Notifications extends Component {
           :
 
           this.props.notifications.items.map(item => (
-            <div key={item.ID}>
+            <div className="custbodyconttent" key={item.ID}>
               <div className="card">
                 <div className="card-body">
                   <h4 className="card-title">{item.Naslov}</h4>

@@ -58,6 +58,7 @@ class AppointmentPanelDoctor extends Component {
       childComponent = <div> <Confirm confirmClick={this.ukloniTermin} hide={this.hideModal} message="Are you sure you want cancel this Appointment?" /> </div>;
       modalTitle = "Confirm Deletion!";
     }
+
     if (action === "REGISTER") {
       childComponent = <AppointmentRegister appointmentID={id} vlasnikID={this.state.vlasnikID} refreshParent={this.loadTermini} />;
       modalTitle = "Register Medical Service";
@@ -122,46 +123,46 @@ class AppointmentPanelDoctor extends Component {
 
         <div className="custcontent">
 
-        
-        <div className="custbodyconttent">
 
-          <div className="appotblheader">
-            <div className="btn-group" >
+          <div className="custbodyconttent">
 
-              <h4 >{'Week: ' + this.generateWeekString()}</h4>
-              &emsp;&emsp;
+            <div className="appotblheader">
+              <div className="btn-group" >
 
+                <h4 >{'Week: ' + this.generateWeekString()}</h4>
+                &emsp;&emsp;
+  
             <div className="" >
-                <button type="button" className="btn btn-success btn-sm" onClick={() => this.loadTermini("previous")}>  ❮ &nbsp;</button>&emsp;
+                  <button type="button" className="btn btn-success btn-sm" onClick={() => this.loadTermini("previous")}>  ❮ &nbsp;</button>&emsp;
                 <button type="button" className="btn btn-success btn-sm" onClick={() => this.loadTermini("next")}>  &nbsp; ❯  </button>
+                </div>
               </div>
+
             </div>
 
+
+
+            {this.props.appointments.loading === true ?
+              <Spinner />
+              :
+              <table id="tablePreview" className="table table-sm table-bordered">
+                <thead><tr className="table-secondary"><th><center>Time&nbsp;&nbsp;&nbsp;&nbsp; </center></th>
+                  <th><center>Monday - {this.getDayDate(0)}</center></th>
+                  <th><center>Tuesday - {this.getDayDate(1)}</center></th>
+                  <th><center>Wednesday - {this.getDayDate(2)}</center></th>
+                  <th><center>Thursday - {this.getDayDate(3)}</center></th>
+                  <th><center>Friday - {this.getDayDate(4)}</center></th></tr>
+                </thead>
+                <tbody>
+
+                  {this.props.appointments.appoByDoctorList[1].map((item, index) =>
+                    <RowItem key={index} item={item} sat={index + 8 + ' : 00'} onClickAction={this.onClickAction} />
+                  )}
+                  <tr className="table-secondary"><th></th><th></th><th></th><th></th><th></th><th></th></tr>
+                </tbody>
+              </table>}
+
           </div>
-
-
-
-          {this.props.appointments.loading === true ?
-            <Spinner />
-            :
-            <table id="tablePreview" className="table table-sm table-bordered">
-              <thead><tr className="table-secondary"><th><center>Time&nbsp;&nbsp;&nbsp;&nbsp; </center></th>
-                <th><center>Monday - {this.getDayDate(0)}</center></th>
-                <th><center>Tuesday - {this.getDayDate(1)}</center></th>
-                <th><center>Wednesday - {this.getDayDate(2)}</center></th>
-                <th><center>Thursday - {this.getDayDate(3)}</center></th>
-                <th><center>Friday - {this.getDayDate(4)}</center></th></tr>
-              </thead>
-              <tbody>
-
-                {this.props.appointments.appoByDoctorList[1].map((item, index) =>
-                  <RowItem key={index} item={item} sat={index + 8 + ' : 00'} onClickAction={this.onClickAction} />
-                )}
-                <tr className="table-secondary"><th></th><th></th><th></th><th></th><th></th><th></th></tr>
-              </tbody>
-            </table>}
-
-        </div>
         </div>
       </div>
 

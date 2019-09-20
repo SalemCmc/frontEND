@@ -25,6 +25,7 @@ class PriceList extends Component {
             showList = <Spinner />;
         }
         else {
+
             showList =
                    <div className="custcontent">
                     <div className="custbodyconttent">
@@ -42,7 +43,6 @@ class PriceList extends Component {
         }
         return (
             <div ><div className="custtitlebox"> <h4 className="text-muted">Price list</h4></div>
-
 
 
                 {showList}

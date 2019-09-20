@@ -37,7 +37,7 @@ class ContactsPanel extends Component {
       <div className="">
         <div className="custtitlebox"> <h4 className="text-muted">Our Contacts</h4></div>
         <div className="custcontent">
-        <div style={{ height: '50vh', width: '100%', boxShadow: '0 4px 8px 0 rgba(0, 0, 0, 0.2)' }}>
+        <div style={{ height: '50vh',padding: "5px", width: '100%' }}>
           <GoogleMapReact defaultCenter={this.props.center} defaultZoom={this.props.zoom} bootstrapURLKeys={{ key: "" }} >
             {this.props.contacts.contactsList.map(item =>
               <Marker key={item.Coordinates.lat} text={item.Name + ' - ' + item.Street} lat={parseFloat(item.Coordinates.lat)} lng={parseFloat(item.Coordinates.lng)} />
@@ -45,8 +45,11 @@ class ContactsPanel extends Component {
           </GoogleMapReact>
         </div>
 
-        <div className="col-container">
+       
           {this.props.contacts.contactsList.map((item, index) =>
+       
+             <div className="conteiner33procent">
+           
             <div key={index} className="custcard">
               <br />
               <h4>  <b>{item.Name}</b> </h4>
@@ -56,10 +59,12 @@ class ContactsPanel extends Component {
               {item.Phones.map(it => <p key={it}><span> &#x260E; &nbsp;</span>  {it}</p>)}
               {item.Emails.map(it => <p key={it}><span>&#x2709; &nbsp; </span>  {it}</p>)}
               <br />
+              
+            </div>
             </div>
           )}
         </div>
-      </div></div>
+      </div>
 
     );
   }

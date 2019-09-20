@@ -121,42 +121,37 @@ class AppointmentPanelClient extends Component {
 
 
 
-        {this.props.loading === true ?
-          <Spinner />
-          :
-          this.props.items.map((item, index) =>
+        <div className="custcontent">
 
-            <div className="card mb-3" key={index} style={{ width: '32%', float: 'left', margin: '0.5%' }}>
+          {this.props.loading === true ?
+            <Spinner />
+            :
+            this.props.items.map((item, index) =>
+              <div className="conteiner33procent">
+                <div className="card " key={index} >
+                  <div className="card-body " >
+                    <time className="icon">
+                      <em>{this.getMonthName(item.Date)}</em>
+                      <strong>{this.getDayName(item.Date)}</strong>
+                      <span>{this.getDay(item.Date)}</span>
 
-              <div className="card-body " >
-
-                <time className="icon">
-                  <em>{this.getDayName(item.Date)}</em>
-                  <strong>{this.getMonthName(item.Date) + ' / ' + this.getYear(item.Date)}</strong>
-                  <span>{this.getDay(item.Date)}</span>
-                </time>
-
-                <div style={{ backgroundColor: '', float: 'left', marginLeft: '3%', width: '65%' }}>
-                  <p >  <b>{this.getDayName(item.Date) + ', ' + item.Vrijeme + ':00 h'}</b></p>
-                  <p >{"Appointment with Dr. " + item.Doktor}</p>
-                  <p >{"Client: " + item.Vlasnik}</p>
-                </div>
-
-
-                <div style={{ backgroundColor: '', float: 'left', textAlign: 'right', width: '100%' }}>
-
-
-                  <a href="# " className="card-link" onClick={() => { this.showDetails(item.ID) }} >Details</a>
-                  {item.Obavljen !== true ?
-                    <a href="# " className="card-link text-danger" onClick={() => { this.showModalConfirm(item.ID) }}>Cancel</a>
-                    : ""}
-
+                    </time>
+                    <div className="right">
+                    <p >  <b>{this.getDayName(item.Date) + ', ' + item.Vrijeme + ':00 h'}</b></p>
+                      <p >{"Appointment with Dr. " + item.Doktor}</p>
+                      <p >{"Client: " + item.Vlasnik}</p>
+                    </div>
+                    <div className="right">
+                      <a href="# " className="card-link" onClick={() => { this.showDetails(item.ID) }} >Details</a>
+                      {item.Obavljen !== true ?
+                        <a href="# " className="card-link text-danger" onClick={() => { this.showModalConfirm(item.ID) }}>Cancel</a>
+                        : ""}
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-          )}
-
+            )}
+        </div>
         <div className="custpaging">
           <Pagination activePage={this.props.pageNumber} itemsCountPerPage={6} onChange={this.handlePageChange}
             totalItemsCount={this.props.count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
