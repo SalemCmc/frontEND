@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 
 import { getCommonApi } from "../WebApis/requestsGraphQL.js";
 import UploadPhoto from '../CommonComponents/UploadPhoto';
+import noimage from '../Icons/noimage.jpg';
  // REDUX:
  import { connect } from 'react-redux';
  import { addNewPet } from '../actions/petsActions';
@@ -85,8 +86,8 @@ class PetAdd extends Component {
                             <strong>Well done!</strong> You successfully save data.
                     </div>
                     :                 <div>
-                    <div className="row">
-                        <div className="col-sm-6">
+                    <div className="">
+                        <div className="conteiner50procent">
                             Name    <input className="form-control form-control-sm" ref={(ref) => this.ime = ref} type="text" />
                             Date of birth   <input className="form-control form-control-sm" ref={(ref) => this.datum = ref} type="date" />
                             Race             <input className="form-control form-control-sm" ref={(ref) => this.rasa = ref} type="text" />
@@ -97,9 +98,9 @@ class PetAdd extends Component {
                             </select>
                             <br />
                         </div>
-                        <div className="col-sm-6">
+                        <div className="conteiner50procent">
                             <div className="col">
-                                <UploadPhoto setPhotoUrl={this.setPhotoUrl} srcPhoto={this.state.slikaURL} />
+                                <UploadPhoto setPhotoUrl={this.setPhotoUrl} srcPhoto={noimage} />
                             </div>
                         </div>
                     </div>

@@ -42,7 +42,9 @@ if(prevState.photoUrl !== this.state.photoUrl)
        Resizer.imageFileResizer(source, size,size,'JPEG',50,0, async uri => {this.setState({[stateName]:uri}) },'base64' );   
      }  
     }
-  render() {  //console.log("state slika: ", this.state.photoUrl);  console.log("props slika: ", this.props.srcPhoto);
+  
+  
+    render() {  //console.log("state slika: ", this.state.photoUrl);  console.log("props slika: ", this.props.srcPhoto);
     let srcPhoto  =  avatarDefault;
 
     if(this.state.photoUrl === null && this.props.srcPhoto!==null )
@@ -56,14 +58,14 @@ if(prevState.photoUrl !== this.state.photoUrl)
     
     return (
       <div >
-        <div className="photoConteiner">
+       
           <img className="photoConteiner" src={srcPhoto} alt="vasa slika" />
-        </div>
+       
         <div className="form-group">
           <div className="input-group mb-3" type="file" onChange={this.fileChangedHandler} >
             <div className="custom-file">
               <input type="file" className="custom-file-input" id="inputGroupFile02" />
-              <label className="custom-file-label" >Choose file</label>
+              <label className="custom-file-label" >Choose photo</label>
             </div>
           </div>
         </div>

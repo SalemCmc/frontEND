@@ -9808,7 +9808,8 @@ border: 1px solid red;
 .photoConteiner
 {
   margin-bottom: 7px;
-  height: 260px;
+  
+  max-width: 100%;
 }
 .photoitem {
   width: 100%;
@@ -10004,12 +10005,36 @@ border: 1px solid red;
     vertical-align: top;
     padding: 5px;
   }
+  .conteiner66procent{
+    border: 0px solid yellow;
+    display: inline-block;
+    vertical-align: top;
+    min-width: 66.6%;
+    width: 386.0px;
+    padding: 5px;
+  }
+  .conteiner50procent{
+    border: 0px solid yellow;
+    display: inline-block;
+    vertical-align: top;
+    min-width: 45%;
+    width: 293.0px;
+    padding: 5px;
+  }
   .conteiner33procent{
     border: 0px solid yellow;
     display: inline-block;
-vertical-align: top;
+    vertical-align: top;
     min-width: 33.3%;
     width: 386.0px;
+    padding: 5px;
+  }
+  .conteiner33procentpets{
+    border: 0 solid yellow;
+    display: inline-block;
+    vertical-align: top;
+    min-width: 33.3%;
+    max-width: 250.0px;
     
     padding: 5px;
   }
@@ -10119,6 +10144,7 @@ vertical-align: top;
     background-color: white;
     width: 100%;
     border-radius: 0.25rem;
+    padding-bottom: 10px;
   
   }
  
@@ -10249,6 +10275,32 @@ vertical-align: top;
   background-color: white;
 
 }
+.modal66procent
+{
+  border:  0px solid red;
+  overflow: auto;
+  float: left;
+  width: 495px;
+  margin-left: 3px;
+
+}
+.conteiner33
+{
+  float: left;
+  margin-top: 5px;
+  border-right:  1px solid #ecf0f1;
+  overflow: auto;
+  width: 33%;
+  padding-left: 5px;
+  padding-right: 5px;
+  min-height: 400px;
+}
+.tabsdiv{
+
+  border:  1px solid #ecf0f1;
+  border-top:  0px solid #ecf0f1;
+  overflow: auto;
+}
 .leftnavitem{
   background-color: white;
   border-radius: 0.25rem;
@@ -10256,7 +10308,7 @@ vertical-align: top;
   padding: 15px;
   margin-top: 0px;
   width: 100%;
-  min-height: 670px; 
+  
   overflow: auto;
   display: inline-block;
 
@@ -10445,15 +10497,12 @@ time.icon:hover, time.icon:focus
 
 
 .custcardmedicalservice {
-  flex: 1;
- 
-  width: 23%;
+  border: 0px solid green;
+  
+  width: 33%;
   max-width: 33%;
   text-align: center;
   float:left;
-  margin-left: 1%;
-  
-  background-color: white;
   padding-bottom:15px;
   border-radius: 0.25rem;
 }

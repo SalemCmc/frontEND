@@ -13,7 +13,7 @@ import Spinner from '../CommonComponents/Spinner'
 class PetDetail extends Component {
     constructor(props) {
         super(props);
-        this.state = { petDetail: {}, timeLineList: null, itemDetails: null, row: "0", showRightPanel: false, showPanelAt: ["", "hidde"] };
+        this.state = { petDetail: {}, timeLineList: [], itemDetails: null, row: "0", showRightPanel: false, showPanelAt: ["", "hidde"] };
         this.loadTimeline = this.loadTimeline.bind(this);
         this.selectItem = this.selectItem.bind(this);
         this.loadPetDetails = this.loadPetDetails.bind(this);
@@ -30,7 +30,8 @@ class PetDetail extends Component {
     }
     async loadTimeline() {
 
-        let timeItems = await loadTimeline(this.props.petID, "0");
+        // TO DO:  fix this...
+        let timeItems = await loadTimeline(this.props.petID, this.state.timeLineList.length.toString());
         await this.setState({ timeLineList: timeItems });
 
     }
@@ -61,34 +62,32 @@ class PetDetail extends Component {
         let timelinePanel = null;
         if (this.state.timeLineList != null && this.state.timeLineList.length > 0) {
 
-            timelinePanel = <div className="leftnavipanel" style={{ height: '500px' }}>
-
-                <h5 className="text-muted">Medical Services Timeline</h5>
+            timelinePanel = <div className="conteiner33">
+            <center className="text-muted">Medical Services Timeline</center>               
+                <hr/>             
                 {this.state.timeLineList.map((item) =>
                     <div key={item.id} className="timelineitem" onClick={() => { this.selectItem(item.id) }}>
-                        <h5>{getDateString(item.Date)}</h5>
+                        <h6>{getDateString(item.Date)}</h6>
                         <h6 className="text-muted">{getDayName(item.Date) + ' at ' + item.Time + ':00 h'}</h6>
-                        <h5>{item.Service}</h5>
-
-                        <br /><br />
+                        <h6>{item.Service}</h6>                    
                     </div>
                 )}
-                <center> <button type="button" className="btn btn-link">Load more...</button> </center>
+                <center> <button type="button" className="btn btn-link"  >Load more...</button> </center>
             </div>
         }
         let medicalServiceDetails = null;  // right side, after click on timeline item
         if (this.state.itemDetails !== null) {
             medicalServiceDetails = <div className="custcardmedicalservice">
-                <img src={pregled} style={{ width: '100px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
+                <img src={pregled} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
 
                 <h6 className="text-muted">Medical Service Details </h6>
                 <hr />
-                <h5>  {this.state.itemDetails.Service} </h5>
+                <h6>  {this.state.itemDetails.Service} </h6>
 
-                <h5 className="text-muted">{this.state.itemDetails.Price + ' KM'}</h5>
-                <h5> {getDateString(this.state.itemDetails.Date)}</h5>
+                <h6 className="text-muted">{this.state.itemDetails.Price + ' KM'}</h6>
+                <h6> {getDateString(this.state.itemDetails.Date)}</h6>
                 <h6 className="text-muted"> {getDayName(this.state.itemDetails.Date) + ", at " + this.state.itemDetails.Time + ':00 h'}</h6>
-                <h5> {this.state.itemDetails.Doctor}</h5>
+                <h6> {this.state.itemDetails.Doctor}</h6>
                 <h6 className="text-muted">  {this.state.itemDetails.Description} </h6>
                 <br />
             </div>
@@ -98,14 +97,14 @@ class PetDetail extends Component {
         let diagnosisDetails = null;  // right side, after click on timeline item
         if (this.state.itemDetails !== null) {
             diagnosisDetails = <div className="custcardmedicalservice">
-                <img src={dijagnoza} style={{ width: '100px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
+                <img src={dijagnoza} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="icon" />
                 <h6 className="text-muted">Diagnosis Details </h6>
                 <hr />
                 {this.state.itemDetails.Diagnosis !== null ?
                     <div>
-                        <h5> {this.state.itemDetails.Diagnosis}</h5>
+                        <h6> {this.state.itemDetails.Diagnosis}</h6>
                         <h6 className="text-muted">Therapy Details </h6>
-                        <h5> {this.state.itemDetails.Therapy}</h5>
+                        <h6> {this.state.itemDetails.Therapy}</h6>
                         <h6 className="text-muted"> {this.state.itemDetails.TherapyDescription} </h6></div>
                     : ""
                 }
@@ -117,14 +116,15 @@ class PetDetail extends Component {
         if (this.state.itemDetails !== null) {
 
             medicamentsDetails = <div className="custcardmedicalservice">
-                <img src={lekovi} style={{ width: '100px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="Loading..." />
+                <img src={lekovi} style={{ width: '50px', margin: 'auto', display: 'block', marginBottom: '10px', marginTop: '10px' }} alt="Loading..." />
                 <h6 className="text-muted"> Medicaments Details</h6>
                 <hr />
                 {this.state.itemDetails.Therapy !== null && this.state.itemDetails.Therapy.Medicaments !== null ?
                     this.state.itemDetails.Medicaments.map((item, index) =>
                         <div key={index}>
-                            <h6 className="text-muted"> {'Quantity: ' + item.Quantity}</h6>
-                            <h5>  {item.Name} </h5> <br />
+                            
+                            <h6>  {item.Name} </h6>
+                            <h6 className="text-muted"> {'Quantity: ' + item.Quantity}</h6> <hr />
                         </div>
                     )
                     : ""
@@ -142,11 +142,17 @@ class PetDetail extends Component {
 
                 <ul className="nav nav-tabs">
                     <li className="nav-item " onClick={() => { this.showPanel(0) }}><a className="nav-link active " data-toggle="tab" href="#home">Pet Info</a></li>
-                    <li className="nav-item " onClick={() => { this.showPanel(1) }}><a className="nav-link " data-toggle="tab" href="#profile">Medical Service History</a></li>
+                    <li className="nav-item " onClick={() => { this.showPanel(1) }}><a className="nav-link " data-toggle="tab" href="#profile">Medical Service</a></li>
+                    
                 </ul>
+<div className="tabsdiv">
+ 
+  
+
 
                 <div className={this.state.showPanelAt[0]}>
-                    <div className="leftnavipanel"> <br />
+              
+                    <div  className="conteiner33procentpets"> <br />
                         <center>
                             <img className="custimg" src={this.state.petDetail.Slika} alt="petPhoto" style={{ width: '180px', height: '180px' }} />
                             <h6 className="text-muted">Name </h6>
@@ -154,7 +160,7 @@ class PetDetail extends Component {
                             <br />
                         </center>
                     </div>
-                    <div className="custcardmedicalservice"> <br />
+                    <div className="conteiner33procentpets"> <br />
 
                         <h6 className="text-muted">Race </h6>
                         <h5> {this.state.petDetail.Rasa} </h5>
@@ -177,10 +183,10 @@ class PetDetail extends Component {
                         : timelinePanel
                     }
                     {this.state.showRightPanel === true ?
-                        <div style={{ width: '68%', float: "left" }} >
+                        <div  className="modal66procent">
                             {this.state.itemDetails === null ? <Spinner />
                                 :
-                                <div className="col-container">
+                                <div  >
                                     {medicalServiceDetails}
                                     {diagnosisDetails}
                                     {medicamentsDetails}
@@ -190,11 +196,7 @@ class PetDetail extends Component {
                         : ""}
                 </div>
 
-
-
-
-
-
+  </div>
             </div>
         );
     }

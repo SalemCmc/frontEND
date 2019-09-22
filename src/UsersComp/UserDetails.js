@@ -172,11 +172,7 @@ class UserDetails extends Component {
           <div className="leftnavitem">
             <center> <h5 className="text-muted">Other info</h5>
             <hr/>
-           
-            
-             
-
-             <img src={newapo} className="mediumicon" alt="incoming apo..." />
+              <img src={newapo} className="mediumicon" alt="incoming apo..." />
              <h5 className="text-muted">{this.state.statisctics.IncomingAppointments + '  Incoming Appointments'}</h5>
              <hr/>
              <img src={apo} className="mediumicon" alt="done apo..." />
@@ -190,10 +186,11 @@ class UserDetails extends Component {
            <hr/>
            <img src={sapa} className="mediumicon" alt="pets..." />
            <h5 className="text-muted">{this.state.statisctics.Pets + '  Pets'}</h5>
-            </center>
+           <hr/>
+           </center>
 
           </div></div>
-
+         
 
 
 

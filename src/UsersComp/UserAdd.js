@@ -370,7 +370,7 @@ class UserAdd extends Component {
     // ----------------basicInfoPanel=null;....
     basicInfoPanel =
       <div className="leftnavitem">
-        <h4> Basic information</h4> <hr />
+        <h4 className="text-muted"> Basic information</h4> <hr />
         Name *              <input className="form-control form-control-sm" ref={(ref) => this.ime = ref} placeholder="*" type="text" />
         Last name *          <input className="form-control form-control-sm" ref={(ref) => this.prezime = ref} placeholder="*" type="text" />
         Username *         <input className="form-control form-control-sm" ref={(ref) => this.username = ref} placeholder="*" type="text" disabled={this.state.nonEditData} />
@@ -385,7 +385,7 @@ class UserAdd extends Component {
       </div>
     passInfoPanel =
       <div className="leftnavitem">
-        <h4> Password</h4> <hr />
+        <h4 className="text-muted"> Password</h4> <hr />
 
         {this.state.action === "NEWUSER" ? "" : <div>Password * <input className="form-control form-control-sm" ref={(ref) => this.pass = ref} placeholder="" type="password" /></div>}
         New password * <input className="form-control form-control-sm" ref={(ref) => this.newPass = ref} placeholder="" type="password" />
@@ -394,7 +394,7 @@ class UserAdd extends Component {
       </div>
     permisionPanel =
       <div className="leftnavitem">
-        <h4> Permision</h4> <hr />
+        <h4 className="text-muted"> Permision</h4> <hr />
         Type of user * <select className="form-control form-control-sm" ref={(ref) => this.rola = ref} disabled={this.state.nonEditData}    >
           <option value="">Choose role(type of user)</option>
           {this.state.role.map(opt => { return (<option key={opt._id} value={opt._id}>{opt.Value}</option>); })}
@@ -403,7 +403,7 @@ class UserAdd extends Component {
       </div>
     photoPanel =
       <div className="leftnavitem">
-        <h4>Photo</h4> <hr />
+        <h4 className="text-muted">Photo</h4> <hr />
         <center>
           <UploadPhoto setPhotoUrl={this.setPhotoUrl} srcPhoto={this.state.slikaURL} /></center>
         <br /><br /><br /><button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.updateUser} >Save</button>
@@ -423,9 +423,10 @@ class UserAdd extends Component {
 
 
       <div className="" id="mainDiv" >
-
+  <div className="custcontent" >
         {this.props.match.params.id === "registration" ? "" :
-          <div className="leftnavipanel">
+       
+       <div className="conteiner33procent">
             <div className="leftnavitem">
               <center>
                 <img className="custimg" src={this.state.Korisnik.Slika} alt="photoUser" />
@@ -445,7 +446,7 @@ class UserAdd extends Component {
           </div>
         }
 
-        <div className="rightpanel">
+        <div className="conteiner66procent">
 
           {this.state.showSuccessAlert === true ?
             <div className="alert alert-dismissible alert-success">
@@ -471,7 +472,7 @@ class UserAdd extends Component {
         </div>
 
 
-
+</div>
       </div>
     );
   }

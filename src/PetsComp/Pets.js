@@ -90,33 +90,47 @@ class Pets extends Component {
 
           <div className="custtitleboxpets">
             {this.props.pets.count > 0 ? <h4 className="text-muted" >Pets</h4> : <h4 className="text-danger">This user doesn't own any pet!</h4>}
-            <Link to="#" onClick={this.addNewPetModal} >Add pet</Link>
+            <Link to="#" onClick={this.addNewPetModal} >Add new pet</Link>
           </div>
 
           <Modal show={this.state.showModal} handleClose={this.handleModal} title={this.state.modalTitle} >
             {this.state.modalChild}
           </Modal>
-
-          <div className="col-container">
+          <div className="custcontent" >
+          
+         
             {this.props.pets.items.map((item, index) =>
-              <div className="custcard" key={index}>
+             <div className="conteiner33procentpets" key={index}>
+             
+              <div className="custcard" >
                 <div className="cardphoto">
-                  <img src={item.Slika} alt="John" style={{ height: "100%", width: "100%", borderTopLeftRadius: '0.25rem', borderTopRightRadius: '0.25rem' }} />
+                  <img src={item.Slika} alt="pet" style={{ height: "100%", width: "100%", borderTopLeftRadius: '0.25rem', borderTopRightRadius: '0.25rem' }} />
                 </div>
                 <h4>{item.Ime}</h4>
                 <hr />
-                <p> Race:  {item.Rasa}</p>
-                <p> Weight: {item.Tezina} kg</p>
-                <p>Date of birth:  {item.DatumRodjenja}</p>
+              
+                <p>
+              <span className="text-muted"  >  Race:</span>
+              <span className="text-right">  <b>{item.Rasa}</b></span>
+               </p>
+               <p>
+              <span className="text-muted" >   Weight:</span>
+              <span className="text-right">  <b>{item.Tezina+' kg.'}</b></span>
+               </p>
+               <p>
+              <span className="text-muted" >  Date of birth:</span>
+              <span className="text-right">  <b>{item.DatumRodjenja}</b></span>
+               </p>
+
                 <hr />
                 <div className="btn-group" role="group" aria-label="Basic example">
                   <button className="btn btn-outline-danger btn-sm" type="submit" onClick={() => { this.removePetModal(item._id) }} >Remove </button>
-                  <button className="btn btn-outline-danger btn-sm" type="submit" onClick={() => { this.detailPetModal(item._id) }} >Details </button>
+                  <button className="btn btn-outline-warning btn-sm" type="submit" onClick={() => { this.detailPetModal(item._id) }} >Details </button>
                 </div>
-              </div>
+              </div> </div>
             )}
-          </div>
-
+         
+</div>
           {this.props.pets.count > this.state.limit ?
 
             <div className="custpaging">
@@ -126,7 +140,7 @@ class Pets extends Component {
               />
             </div>
             : ""}
-
+   
         </div>
       }</div>
     );
