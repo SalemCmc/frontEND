@@ -10,7 +10,7 @@ class Home extends Component {
 
       <div >
 
-        <br />
+       
         <img src={MainPhoto} style={{ width: '100%' }} alt="Naslovna" />
 
         <h1>Wellcome</h1>

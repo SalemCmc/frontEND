@@ -1,6 +1,7 @@
 
 
 import { combineReducers } from 'redux';
+//import rootReducer from './rootReducer';  // TEST RESET
 import authReducer from './authReducer';
 import priceListReducer from './priceListReducer';
 import contactsReducer from './contactsReducer';
@@ -12,6 +13,7 @@ import messagesReducer from './messagesReducer';
 import appointmentsReducer from './appointmentsReducer';
 
 export default combineReducers({
+  //root:rootReducer,   // TEST
   auth: authReducer,
   price: priceListReducer,
   contacts: contactsReducer,

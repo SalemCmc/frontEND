@@ -18,6 +18,8 @@ import { setCurrentUser } from './actions/authActions';  //  , logoutUser  SET L
 import setAuthToken from './Utils/setAuthToken';
 import PrivateRoute from './CommonComponents/PrivateRoute';
 import PriceList from './PriceListComp/PriceList';
+import Team from './AboutComp/Team';
+import Clinic from './AboutComp/Clinic';
 //import jwt_decode from 'jwt-decode';
 
 import { Provider } from 'react-redux';
@@ -66,6 +68,8 @@ class App extends Component {
               <Route path="/UserAdd/:id" component={UserAdd} permission="UsersADD" />
               <Route path="/UserDetails/:id" component={UserDetails} permission="UserDETAILS" />
               <Route path="/admin" component={AdminPanel} />
+              <Route path="/ourTeam" component={Team} />  
+              <Route path="/clinic" component={Clinic} /> 
               <Switch>
                 <PrivateRoute exact path="/Messages" component={MessagesPanel} permission="Messages" />
               </Switch>

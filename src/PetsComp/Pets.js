@@ -83,66 +83,68 @@ class Pets extends Component {
 
   render() {
     return (<div>
-      {this.props.pets.loading === true ?
-        <Spinner />
-        :
-        <div className="">
 
-          <div className="custtitleboxpets">
-            {this.props.pets.count > 0 ? <h4 className="text-muted" >Pets</h4> : <h4 className="text-danger">This user doesn't own any pet!</h4>}
-            <Link to="#" onClick={this.addNewPetModal} >Add new pet</Link>
-          </div>
+      <div className="">
 
-          <Modal show={this.state.showModal} handleClose={this.handleModal} title={this.state.modalTitle} >
-            {this.state.modalChild}
-          </Modal>
-          <div className="custcontent" >
-          
-         
-            {this.props.pets.items.map((item, index) =>
-             <div className="conteiner33procentpets" key={index}>
-             
-              <div className="custcard" >
-                <div className="cardphoto">
-                  <img src={item.Slika} alt="pet" style={{ height: "100%", width: "100%", borderTopLeftRadius: '0.25rem', borderTopRightRadius: '0.25rem' }} />
-                </div>
-                <h4>{item.Ime}</h4>
-                <hr />
-              
-                <p>
-              <span className="text-muted"  >  Race:</span>
-              <span className="text-right">  <b>{item.Rasa}</b></span>
-               </p>
-               <p>
-              <span className="text-muted" >   Weight:</span>
-              <span className="text-right">  <b>{item.Tezina+' kg.'}</b></span>
-               </p>
-               <p>
-              <span className="text-muted" >  Date of birth:</span>
-              <span className="text-right">  <b>{item.DatumRodjenja}</b></span>
-               </p>
-
-                <hr />
-                <div className="btn-group" role="group" aria-label="Basic example">
-                  <button className="btn btn-outline-danger btn-sm" type="submit" onClick={() => { this.removePetModal(item._id) }} >Remove </button>
-                  <button className="btn btn-outline-warning btn-sm" type="submit" onClick={() => { this.detailPetModal(item._id) }} >Details </button>
-                </div>
-              </div> </div>
-            )}
-         
-</div>
-          {this.props.pets.count > this.state.limit ?
-
-            <div className="custpaging">
-              <Pagination activePage={this.props.pets.searchParams.pageNumber} itemsCountPerPage={3} onChange={this.handlePageChange}
-                totalItemsCount={this.props.pets.count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
-                linkClass="" activeLinkClass="" activeClass="page-item active" disabledClass="text-secondary" firstPageText="first" lastPageText="last" nextPageText=">" prevPageText="<"
-              />
-            </div>
-            : ""}
-   
+        <div className="custtitleboxpets">
+          {this.props.pets.count > 0 ? <h4 className="text-muted" >Pets</h4> : <h4 className="text-danger">This user doesn't own any pet!</h4>}
+          <Link to="#" onClick={this.addNewPetModal} >Add new pet</Link>
         </div>
-      }</div>
+
+        <Modal show={this.state.showModal} handleClose={this.handleModal} title={this.state.modalTitle} >
+          {this.state.modalChild}
+        </Modal>
+
+        {this.props.pets.loading === true ? <Spinner /> :
+          <div className="custcontent" >
+
+
+
+
+            {this.props.pets.items.map((item, index) =>
+              <div className="conteiner33procentpets" key={index}>
+
+                <div className="custcard" >
+                  <div className="cardphoto">
+                    <img src={item.Slika} alt="pet" style={{ height: "100%", width: "100%", borderTopLeftRadius: '0.25rem', borderTopRightRadius: '0.25rem' }} />
+                  </div>
+                  <h4>{item.Ime}</h4>
+                  <hr />
+
+                  <p>
+                    <span className="text-muted"  >  Race:</span>
+                    <span className="text-right">  <b>{item.Rasa}</b></span>
+                  </p>
+                  <p>
+                    <span className="text-muted" >   Weight:</span>
+                    <span className="text-right">  <b>{item.Tezina + ' kg.'}</b></span>
+                  </p>
+                  <p>
+                    <span className="text-muted" >  Date of birth:</span>
+                    <span className="text-right">  <b>{item.DatumRodjenja}</b></span>
+                  </p>
+
+                  <hr />
+                  <div className="btn-group" role="group" aria-label="Basic example">
+                    <button className="btn btn-outline-danger btn-sm" type="submit" onClick={() => { this.removePetModal(item._id) }} >Remove </button>
+                    <button className="btn btn-outline-warning btn-sm" type="submit" onClick={() => { this.detailPetModal(item._id) }} >Details </button>
+                  </div>
+                </div> </div>
+            )}
+
+          </div>}
+        {this.props.pets.count > this.state.limit ?
+
+          <div className="custpaging">
+            <Pagination activePage={this.props.pets.searchParams.pageNumber} itemsCountPerPage={3} onChange={this.handlePageChange}
+              totalItemsCount={this.props.pets.count} pageRangeDisplayed={10} innerClass="btn-group mr-2" itemClass="btn btn-outline-primary btn-sm" itemClassFirst="page-item"
+              linkClass="" activeLinkClass="" activeClass="page-item active" disabledClass="text-secondary" firstPageText="first" lastPageText="last" nextPageText=">" prevPageText="<"
+            />
+          </div>
+          : ""}
+
+      </div>
+    </div>
     );
   }
 }

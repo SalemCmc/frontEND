@@ -1,8 +1,8 @@
 
 
-import { GET_USERS_SHORT, GET_USERS, GET_USER, UPDATE_USER, GET_ERRORS, USERS_LOADING, CLEAR_ERRORS } from './types';
-import { getUsersG } from "../WebApis/requestsGraphQL.js";
-import { getUserByIDG, updateUserG, getKorisniciShort } from "../WebApis/requestsGraphQL.js";
+import { GET_USERS_SHORT, GET_USERS, GET_USER, UPDATE_USER, GET_ERRORS, USERS_LOADING, CLEAR_ERRORS, GET_OUR_TEAM, TEAM_LOADING } from './types';
+
+import { getUserByIDG, getUsersG, updateUserG, getKorisniciShort } from "../WebApis/requestsGraphQL.js";
 
 export const getUsersShort = (searcString, type) => dispatch => {
 
@@ -54,7 +54,33 @@ export const getUsers = searchParams => async dispatch => {
         }
         );
 };
+export const getOurTeam = () => async dispatch => {
 
+         dispatch(setOurTeamLoading(true));
+        dispatch({
+            type: CLEAR_ERRORS,
+            payload: { error: false, errorMessage: "" }
+        })
+     
+    await getUsersG("", "Doctor", true, 0, 100)
+        .then(response => {
+
+            dispatch({
+                type: GET_OUR_TEAM,
+                ourTeam: response.items,
+            })
+        }
+        )
+        .catch(err => {
+
+            dispatch(setUsersLoading(false));
+            dispatch({
+                type: GET_ERRORS,
+                payload: err
+            })
+        }
+        );
+};
 /// get user by ID (edit profile or view details)
 export const getUserByID = ID => async dispatch => {
 
@@ -108,6 +134,13 @@ export const updateUser = user => async dispatch => {
 export const setUsersLoading = (value) => {
     return {
         type: USERS_LOADING,
+        payload: value
+    };
+};
+
+export const setOurTeamLoading = (value) => {
+    return {
+        type: TEAM_LOADING,
         payload: value
     };
 };

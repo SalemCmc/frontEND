@@ -27,8 +27,8 @@ class Header extends Component {
         <li className="nav-item dropdown show">
           <a className="nav-link dropdown-toggle" data-toggle="dropdown" href="0" role="button" aria-haspopup="false" aria-expanded="false">{this.props.auth.user.userName} &nbsp;</a>
           <div className="dropdown-menu" x-placement="bottom-start">
-            <a className="dropdown-item" href={"/UserDetails/" + this.props.auth.user.id}><span role="img" aria-label=""> &#9998; &nbsp; &nbsp;</span> My profile</a>
-            <Link className="dropdown-item" to={"/"} onClick={(e) => this.onLogoutClick(e)}>  <span role="img" aria-label=""> &#128273;&nbsp; &nbsp;Log Out</span>    </Link>
+            <Link className="dropdown-item" to={"/UserDetails/" + this.props.auth.user.id}><span role="img" aria-label=""> &#9998; &nbsp; &nbsp;</span> My profile</Link>
+            <a className="dropdown-item" href={"/"} onClick={(e) => this.onLogoutClick(e)}>  <span role="img" aria-label=""> &#128273;&nbsp; &nbsp;Log Out</span>    </a>
           </div>
         </li>
         <li className="nav-item"><img src={this.props.auth.user.avatar} className="avatar" alt="your avatar" /> </li>&nbsp; &nbsp;
@@ -84,6 +84,14 @@ class Header extends Component {
               <li className="nav-item">
                 <Link className="nav-link" to="/Pricelist">Price list</Link>
               </li>
+              <li className="nav-item dropdown show">
+                <a className="nav-link dropdown-toggle" data-toggle="dropdown" href="0" role="button" aria-haspopup="false" aria-expanded="false">About</a>
+                <div className="dropdown-menu" x-placement="bottom-start">
+                  <Link className="dropdown-item" to="/clinic/">Our clinic</Link>
+                  <Link className="dropdown-item" to="/ourTeam/">Our team</Link>
+                </div>
+              </li>
+
             </ul>
             {authenticatedTag}
           </div>

@@ -112,6 +112,10 @@ class UserAdd extends Component {
         this.licna.value = K.BrLicneKarte;
         this.titula.value = K.Titula;
         this.telefon.value = K.Telefon;
+        this.linkedin.value=K.Linkedin;
+        this.facebook.value=K.Facebook;
+        this.twitter.value=K.Twetter;
+        this.about.value=K.About;
         break;
       case "PERMISION":
         this.rola.options.selectedIndex = this.state.role.findIndex(function (element) { return element._id === K.RolaID; }) + 1;
@@ -140,6 +144,10 @@ class UserAdd extends Component {
         userForUpdate.BrLicneKarte = this.licna.value;
         userForUpdate.Titula = this.titula.value;
         userForUpdate.Telefon = this.telefon.value;
+        userForUpdate.Linkedin=this.linkedin.value;
+        userForUpdate.Facebook=this.facebook.value;
+        userForUpdate.Twetter=this.twitter.value;
+        userForUpdate.About=this.about.value;
 
         break;
       case "PERMISION":
@@ -312,7 +320,13 @@ class UserAdd extends Component {
       RolaID: this.rola.options[this.rola.selectedIndex].value,
       Aktivan: true,
       Slika: this.state.newSlika,
-      Avatar: this.state.newAvatar
+      Avatar: this.state.newAvatar,
+      Linkedin:this.linkedin.value,
+      Facebook: this.facebook.value,
+      Twetter:this.twitter.value,
+      About:this.about.value
+
+
     };
     console.log("sadrzaj  KORISNIK ID je: :", newKorisnik);
     return newKorisnik;
@@ -379,6 +393,13 @@ class UserAdd extends Component {
         Adress *            <input className="form-control form-control-sm" ref={(ref) => this.adresa = ref} placeholder="*" type="text" />
         Phone numeber           <input className="form-control form-control-sm" ref={(ref) => this.telefon = ref} placeholder="" type="tel" inputMode="numeric" />
         Profession             <input className="form-control form-control-sm" ref={(ref) => this.titula = ref} placeholder="" type="text" />
+       
+        Linkedin             <input className="form-control form-control-sm" ref={(ref) => this.linkedin = ref} placeholder="" type="text" />
+        Facebook             <input className="form-control form-control-sm" ref={(ref) => this.facebook = ref} placeholder="" type="text" />
+        Twitter             <input className="form-control form-control-sm" ref={(ref) => this.twitter = ref} placeholder="" type="text" />
+
+       About <textarea className="form-control form-control-sm" rows="3" ref={(ref) => this.about = ref}  placeholder="about client" type="text" />
+       
         Date of registration      <input className="form-control form-control-sm" ref={(ref) => this.datum = ref} placeholder={new Date().toJSON().slice(0, 10)} type="text" disabled />
 
         {this.state.action === "NEWUSER" ? "" : <div><br /><br /><br /><button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.updateUser} >Save</button></div>}

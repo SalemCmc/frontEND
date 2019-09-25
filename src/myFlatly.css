@@ -4699,7 +4699,10 @@
    border-radius: 0.25rem;
    
  }
- 
+ .desctext
+ {
+   padding-right: 20px;
+ }
  .card > hr {
    margin-right: 0;
    margin-left: 0;
@@ -9958,7 +9961,8 @@ border: 1px solid red;
     padding-top: 1%; 
     width: 75%;
     height: 100%;
-    border: 1px solid lightgrey;
+    border: 0px solid lightgrey;
+   
   }
   .custConteiner{
     overflow: auto;
@@ -10053,6 +10057,11 @@ border: 1px solid red;
   }
   .floatright{
   float: right;
+  }
+  .searchcontrolconteiner
+  {
+    min-width: 300px;
+    float: right;
   }
 
 

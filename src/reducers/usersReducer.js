@@ -1,5 +1,5 @@
 
-import { GET_USERS_SHORT, GET_USERS, GET_USER, UPDATE_USER, USERS_LOADING } from '../actions/types';
+import { GET_USERS_SHORT, GET_USERS, GET_USER, UPDATE_USER, USERS_LOADING ,GET_OUR_TEAM,TEAM_LOADING} from '../actions/types';
 
 const initialState = {
     items: [],
@@ -8,13 +8,21 @@ const initialState = {
     usersShortList: [],
     userUpdate: {},
     searchParams: {},
-    loading: false
+    loading: false,
+    ourTeam:[],
+    loadingTeam:false
 
 };
 
 export default function (state = initialState, action) {
 
-    switch (action.type) {
+    switch (action.type) { 
+        case GET_OUR_TEAM:
+            return {
+                ...state,
+                ourTeam: action.ourTeam,
+                loadingTeam: false
+            };
         case GET_USERS_SHORT:
             return {
                 ...state,
@@ -46,6 +54,11 @@ export default function (state = initialState, action) {
                 ...state,
                 loading: action.payload
             };
+        case TEAM_LOADING:
+             return {
+                    ...state,
+                    loadingTeam: action.payload
+                };
         default:
             return state;
     }

@@ -68,7 +68,7 @@ class Search extends Component {
     var dateInput = null; var stringInput = null;
     var radioInput = null; var checkBoxInput = null;
     if (this.props.sdate === "true") {
-      dateInput = (<div> <input className="form-control form-control-sm" ref={ref => (this.SearchDate = ref)}
+      dateInput = (<div className="searchcontrolconteiner"> <input className="form-control form-control-sm" ref={ref => (this.SearchDate = ref)}
         placeholder="Datum" type="date" />   &emsp; </div>);
     }
     if (this.props.scheck === "true") {
@@ -79,19 +79,24 @@ class Search extends Component {
                             <input type="radio" name="typeUser" ref={ref => (this.rdbEmployees = ref)} /> Employees    &emsp;</div>);
     }
     if (this.props.sstring === "true") {
-      stringInput = (<div><input className="form-control form-control-sm" ref={ref => (this.SearchString = ref)}
+      stringInput = (<div className="searchcontrolconteiner1"><input className="form-control form-control-sm" ref={ref => (this.SearchString = ref)}
         placeholder="txt" type="text" />  &emsp;</div>);
     }
 
     return (
-      <div className="floatright">
+      <div className="right">
         <div className="form-inline">
-          <button className="btn btn-outline-primary btn-sm" onClick={this.refresh}  >Refresh</button>
-          &emsp;
+        
           {stringInput}
           {dateInput}
+         
           {checkBoxInput}
           {radioInput}
+         
+         
+   
+          <button className="btn btn-outline-primary btn-sm" onClick={this.refresh}  >Refresh</button>
+          &emsp;
           <button className="btn btn-primary btn-sm" onClick={this.search}> Search</button>
         </div>
       </div>

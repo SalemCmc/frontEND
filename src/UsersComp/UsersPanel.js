@@ -84,39 +84,39 @@ class UsersPanel extends Component {
         </div>
 
         <div className="custcontent">
-        {this.props.errors.error === true ?
-          <Error message={this.props.errors.errorMessage.toString()} />
-          : null}
-        {this.props.users.loading === true ?
-          <Spinner />
-          :
-          this.props.users.items.map(item =>
-<div className="conteiner25procent">
-            <div className="custcard" key={item._id}>
-              <div className="cardphoto">
-                <img src={item.Slika} alt="John" style={{ height: "100%", width: "100%", borderTopLeftRadius: '0.25rem', borderTopRightRadius: '0.25rem' }} />
-              </div>
-              <h4>{item.Ime + " " + item.Prezime}</h4>
-              {item.Aktivan === true ? ""
-                : <h6 className="text-danger"><b><span role="img" aria-label=""> &#9940; &nbsp;</span>
-                  NON ACTIVE</b></h6>}
-              <hr />
+          {this.props.errors.error === true ?
+            <Error message={this.props.errors.errorMessage.toString()} />
+            : null}
+          {this.props.users.loading === true ?
+            <Spinner />
+            :
+            this.props.users.items.map(item =>
+              <div className="conteiner25procent" key={item._id}>
+                <div className="custcard" >
+                  <div className="cardphoto">
+                    <img src={item.Slika} alt="John" style={{ height: "100%", width: "100%", borderTopLeftRadius: '0.25rem', borderTopRightRadius: '0.25rem' }} />
+                  </div>
+                  <h4>{item.Ime + " " + item.Prezime}</h4>
+                  {item.Aktivan === true ? ""
+                    : <h6 className="text-danger"><b><span role="img" aria-label=""> &#9940; &nbsp;</span>
+                      NON ACTIVE</b></h6>}
+                  <hr />
 
-              <p>  <span role="img" aria-label="nn">&#x260E; &nbsp;</span> {item.Telefon}</p>
-              <p>  <span role="img" aria-label="nn">&#x2709; &nbsp; </span> {item.Email}</p>
-              <p>  <span role="img" aria-label="nn">&#x1F3E0; &nbsp;</span> {item.Adresa}</p>
-              <p>  <span role="img" aria-label="nn">&#128219; &nbsp;</span>{item.BrLicneKarte}</p>
+                  <p>  <span role="img" aria-label="nn">&#x260E; &nbsp;</span> {item.Telefon}</p>
+                  <p>  <span role="img" aria-label="nn">&#x2709; &nbsp; </span> {item.Email}</p>
+                  <p>  <span role="img" aria-label="nn">&#x1F3E0; &nbsp;</span> {item.Adresa}</p>
+                  <p>  <span role="img" aria-label="nn">&#128219; &nbsp;</span>{item.BrLicneKarte}</p>
 
-              <hr />
+                  <hr />
 
-              <div className="btn-group" role="group" aria-label="Basic example">
-                <Link to={`/UserAdd/${item._id}`}><h6>Edit </h6></Link> &nbsp; &nbsp; &nbsp;
+                  <div className="btn-group" role="group" aria-label="Basic example">
+                    <Link to={`/UserAdd/${item._id}`}><h6>Edit </h6></Link> &nbsp; &nbsp; &nbsp;
                 <Link to={`/UserDetails/${item._id}`}><h6>Details </h6></Link>
+                  </div>
+                </div>
               </div>
-            </div>
-            </div>
-          )}
-   </div>
+            )}
+        </div>
 
         <div className="custpaging">
 

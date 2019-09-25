@@ -4,7 +4,7 @@ export const GET_ERRORS = 'GET_ERRORS';
 export const CLEAR_ERRORS = 'CLEAR_ERRORS';
 
 export const SET_CURRENT_USER = 'SET_CURRENT_USER';
-
+export const USER_LOGOUT = 'USER_LOGOUT';
 
 
 // price list:
@@ -22,6 +22,8 @@ export const GET_USER = 'GET_USER';
 export const USERS_LOADING = 'USERS_LOADING';
 export const UPDATE_USER = 'UPDATE_USER';
 export const LOGIN_LOADING = 'LOGIN_LOADING';
+export const GET_OUR_TEAM = 'GET_OUR_TEAM';  
+export const TEAM_LOADING = 'TEAM_LOADING';
 // pets:
 export const GET_PETS = 'GET_PETS';
 export const PETS_LOADING = 'PETS_LOADING';

@@ -1,6 +1,7 @@
 
 
 import axios from 'axios';
+//import store from '../store';
 import setAuthToken from '../Utils/setAuthToken';
 //import jwt_decode from 'jwt-decode';
 import { GET_ERRORS, CLEAR_ERRORS, SET_CURRENT_USER, LOGIN_LOADING } from './types';
@@ -51,6 +52,11 @@ export const setCurrentUser = (decoded, decodedPermision, isAuth = true) => {
 
 // Log user out
 export const logoutUser = () => dispatch => {
+
+  /*   console.log("RESET STATE prije klika: ",  store.getState());
+    dispatch({  type: USER_LOGOUT});
+    console.log("RESET STATE posle klika: ",  store.getState()); */
+
   // Remove token from localStorage
   localStorage.removeItem('jwtToken');
   localStorage.removeItem('loggedUser');
@@ -59,6 +65,9 @@ export const logoutUser = () => dispatch => {
   setAuthToken(false);
   // Set current user to {} which will set isAuthenticated to false
   dispatch(setCurrentUser({}, null, false));
+
+
+
 };
 
 export const setLoginLoading = (value) => {

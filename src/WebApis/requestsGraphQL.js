@@ -70,7 +70,7 @@ export async function getUsersG(searchString, role, active, row, limit) {
   const query = `query getKor ($input : searchParams)
         { 
           getKorisnici(input:$input)
-          { count items{ _id Ime Prezime Adresa Telefon Email Aktivan BrLicneKarte Slika}
+          { count items{ _id Titula Ime Prezime Adresa Telefon Email Aktivan BrLicneKarte Slika Titula About Linkedin Facebook Twetter}
           }
         }`;
   let input = { searchString, role, active, row, limit };
@@ -95,7 +95,7 @@ export async function getUserByIDG(id) {
                   {
                     getKorisnikByID(id:$id)
                     {_id Ime Prezime Username Email Adresa BrLicneKarte DatumUnosa Titula
-                    RolaID Telefon Aktivan Slika}
+                    RolaID Telefon Aktivan Slika About}
                   }`;
   let kor = await graphqlRequest(query, { id });
   return kor.getKorisnikByID;
@@ -128,6 +128,7 @@ export async function updateUserG(input) {
                             updateKorisnik(input: $input) { ${resultSet} ${responseSet} }
                           }`;
   let resp = await graphqlRequest(query, { input });
+  console.log("API: ",resp.updateKorisnik);
   return resp.updateKorisnik;
 }
 // ------------------------------------------------------------------------------------------------------
@@ -380,7 +381,8 @@ export async function getPosiljaociPoruka(ID1, role, row, searchString, limit) {
 
 }
 //#endregion                        END        P O R U K E
-export async function loadTimeline(id, row) {
+
+export async function getMedicServices(id, row) {
   const query = `query getTimelinee($id : ID!, $row: String)
                                     {getPetServiceTimeline(id: $id, row:  $row)
                                     {id  Service Date Time Description}}`;
@@ -390,6 +392,8 @@ export async function loadTimeline(id, row) {
 
   return resp.getPetServiceTimeline;
 }
+
+
 
 export async function getTimelineItemDetails(id) {
   console.log("RESPO: ", id);
