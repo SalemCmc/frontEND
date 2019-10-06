@@ -11,6 +11,7 @@ import usersReducer from './usersReducer';
 import petsReducer from './petsReducer';
 import messagesReducer from './messagesReducer';
 import appointmentsReducer from './appointmentsReducer';
+import adminReducer from './adminReducer';
 
 export default combineReducers({
   //root:rootReducer,   // TEST
@@ -22,7 +23,8 @@ export default combineReducers({
   users: usersReducer,
   pets: petsReducer,
   messages:messagesReducer,
-  appointments: appointmentsReducer
+  appointments: appointmentsReducer,
+  admin:adminReducer
   
   // profile: profileReducer,
   // post: postReducer

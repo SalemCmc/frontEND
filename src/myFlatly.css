@@ -564,13 +564,14 @@
  }
  
  .container {
-   width: 100%;
-   height: auto;
-   padding-right: 15px;
-   padding-left: 15px;
-   margin-right: auto;
-   margin-left: auto;
-   border: 1px solid rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  border: 0px solid rgba(0, 0, 0, 0.2);
+
  }
  
  @media (min-width: 576px) {
@@ -5712,7 +5713,7 @@
   display: none;
   overflow: hidden;
   outline: 0;
-
+  width: 100%;
   
 
  }

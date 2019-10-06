@@ -1,23 +1,12 @@
 
 import React, { Component } from 'react';
+
+import { getAllPermissions, getCommonApi, getPermissionsByRole } from "../WebApis/requestsGraphQL.js";
+
+
+// REDUX
 import { connect } from 'react-redux';
-//import { getAllPermissions } from "../WebApis/requestsGraphQL.js";
-//, getPermissionsByRole
-
-
-
-
-///-----------------------------------------IN PROGRESS--------------------------------------------//
-///-----------------------------------------IN PROGRESS--------------------------------------------//
-///-----------------------------------------IN PROGRESS--------------------------------------------//
-///-----------------------------------------IN PROGRESS--------------------------------------------//
-///-----------------------------------------IN PROGRESS--------------------------------------------//
-///-----------------------------------------IN PROGRESS--------------------------------------------//
-
-
-
-
-
+import { getInitialData, selectRole, selectPermision,saveNewPermisionsByRole } from '../actions/adminActions';
 
 
 
@@ -28,33 +17,75 @@ import { connect } from 'react-redux';
 class AdminPanel extends Component {
   constructor(props) {
     super(props);
-    this.state = { permissionsList: [], group: [] };
-    this.loadDetails = this.loadDetails.bind(this);
-    this.loadDetails();
-  }
-  async loadDetails() {
+    this.state = { listForDelete: [], listForAdd: [], permissions: [] };
+    this.loadInitialData = this.loadInitialData.bind(this);
 
-   /*  let res = await getAllPermissions();
-    console.log("PERMISIJE IZ BAZU: ", res);
-
-    let group = [];
-    res.map((item) => {
-      group.push(item.Group);
-    })
-
-    let Fgroup = Array.from(new Set(group));
-    this.setState({ permissionsList: res, group: Fgroup }); */
-
-
-
-
+    this.handleCheckPermision = this.handleCheckPermision.bind(this);
+ 
+    this.selectRole = this.selectRole.bind(this);
+    this.loadInitialData();
 
   }
+  async loadInitialData() {
+    this.props.getInitialData();
+
+
+    let rol = await getCommonApi("Korisnici");
+    let permissions = await getAllPermissions();
+
+    this.setState({ permissionsList: permissions, permissions: permissions, role: rol });
+  }
+  selectRole() {
+
+    let roleID = this.role.value;
+    // this.loadDetails(roleID);
+    this.props.selectRole(roleID);
+  }
+
+
+
+
+
+  handleCheckPermision(row, cell) {
+
+
+
+
+    /*     let listPerm = this.state.permissionsList;
+    
+        let checked = true;
+        if (listPerm[row].items[cell].checked !== undefined) {
+          checked = !listPerm[row].items[cell].checked;
+        }
+        listPerm[row].items[cell].checked = checked;
+        //console.log("listPerm: ", listPerm);
+    
+    
+        let listForDelete = new Set(this.state.listForDelete);
+        let listForAdd = new Set(this.state.listForAdd);
+    
+        if (checked === false) // delete el
+        {
+          listForDelete.add(listPerm[row].items[cell]._id);
+          listForAdd.delete(listPerm[row].items[cell]._id);
+        }
+        else {
+          listForDelete.delete(listPerm[row].items[cell]._id);
+          listForAdd.add(listPerm[row].items[cell]._id);
+        }
+    
+        this.setState({ listForDelete: listForDelete, listForAdd: listForAdd }); */
+
+  }
+
+
+
 
   render() {
+ //   console.log("RENDER:------------------------------------------------",this.props.permisionListShow);
     return (
       <div className="" >
-
+        <div className="custtitlebox"> <h4 className="text-muted">User details</h4></div>
 
         <div className="leftnavipanel">
           <div className="leftnavitem">
@@ -65,56 +96,44 @@ class AdminPanel extends Component {
 
           </div>
         </div>
+
         <div className="rightpanel">
           <div className="leftnavitem">
 
             <h4>Permissions by role</h4>
-
+            <hr />   Role
+        <select className="form-control form-control-sm" ref={(ref) => this.role = ref} onChange={this.selectRole}   >
+        <option value="">Choose role(type of user)</option>
+              {this.props.roles.map(opt => { return (<option key={opt._id} value={opt._id}>{opt.Value}</option>); })}
+            </select>
 
             <hr />
-            <div className="row">
-              <div className="col-6">
-                <ul clclassNameass="list-group">
-                  {this.state.permissionsList.map((item) =>
-                    <div>
-                      <button type="button" className="btncollapse" data-toggle="collapse" data-target="#demo">Simple collapsible</button>
-                      <div id="demo" className="collapse">
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-                        sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                  </div>
-                    </div>
-                  )}
-                </ul>
-              </div>
-              <div className="col-6">
+            List of permissions
+
                 <ul className="card">
-                  <h6>List of permissions</h6>
-                  {this.state.group.map((item) =>
+              {this.props.permisionListShow.map((item, index) =>
+                <li key={index} className=" " >
+                  <button type="button" className="btn btn-link">
+                    <h5 data-toggle="collapse" data-target={'#' + item.Group}>{item.Group} </h5>
+                  </button>
+                  <div id={item.Group} className="collapse">
 
 
-                    <li key={item} className="" >
-                      <button type="button" class="btn btn-link">
-                        <h5 data-toggle="collapse" data-target={'#' + item}>{item} </h5>
-                      </button>
+                    {item.items.map((subItem, index2) =>
+                      <div key={index2} className="">
 
-                      <div id={item} className="collapse">
-                        {this.state.permissionsList.map((subItem) =>
-                          item === subItem.Group ?
-                            <div key={subItem._id} className="">
-                              <br />
-                              <button type="button" class="btn btn-danger btn-sm">{subItem.Name}</button>
-
-                            </div>
-                            : ""
-                        )}<hr />
+                        <input type="checkbox" checked={subItem.checked} onChange={() => this.props.selectPermision(index, index2, subItem._id)} /> <b>{" " + subItem.Name + " "}</b>
+                        <label className="text-secondary">{" - Desription: " + subItem.Desc}</label>
                       </div>
-                    </li>
-                  )}
-                </ul>
-              </div>
+                    )
+                    }
 
-            </div>
+                    <hr />
+                  </div>
+                </li>
+              )}
+            </ul>
+            <button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.props.saveNewPermisionsByRole} >Save</button>
 
           </div>
         </div>
@@ -128,8 +147,10 @@ class AdminPanel extends Component {
 
 
 const mapStateToProps = state => ({
-  auth: state.auth
+  auth: state.auth,
+  roles: state.admin.roles,
+  permisionListShow: state.admin.permisionListShow
 });
 //export default Header;
 //export default connect(mapStateToProps, { logoutUser })(AdminPanel);
-export default connect(mapStateToProps, {})(AdminPanel);
+export default connect(mapStateToProps, { getInitialData, selectRole, selectPermision,saveNewPermisionsByRole })(AdminPanel);

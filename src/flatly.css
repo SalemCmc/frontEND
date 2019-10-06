@@ -4230,6 +4230,7 @@
  }
  
  .navbar {
+   height: 780px;
    position: relative;
    display: -webkit-box;
    display: -ms-flexbox;

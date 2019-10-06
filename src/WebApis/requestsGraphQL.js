@@ -441,9 +441,9 @@ export async function getContacts() {
 
 //#region                 A D M I N  
 export async function getAllPermissions() {
-  const query = `{
-                             Permissions{_id Group Name Desc}
-                           }`;
+  const query = `{Permissions
+    {Group items{_id Name Desc}}
+    }`;
   let resp = await graphqlRequest(query);
   //   console.log("priceList: ",priceList);
   return resp.Permissions;
@@ -451,12 +451,21 @@ export async function getAllPermissions() {
 
 export async function getPermissionsByRole(id) {
   const query = `query getperroll($id : ID!)
-                                    {getPermissionsByRole(id: $id)  { _id RoleID PermisionID, Group Name }
+                                    {getPermissionsByRole(id: $id)  
                                   }`;
-
+// {getPermissionsByRole(id: $id)  { _id RoleID PermissionID }
   let resp = await graphqlRequest(query, { id });
   return resp.getPermissionsByRole;
 
+}
+
+export async function updatePermissionsByRoles(input) {
+  const query = `mutation updato($input: [permItemByRole]) {
+    updatePermByRoles(input: $input) 
+  }`;
+  let resp = await graphqlRequest(query,{ input });
+     console.log("PERMIS SAVE: ",resp);
+  return resp.updatePermByRoles;
 }
 //#endregion
 

@@ -16,10 +16,7 @@ class UserAdd extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      Korisnik: {}, slikaURL: null, role: [],
-
-      //NOVI KOD:
-      action: "", newSlika: "", newAvatar: "", showErrorAlert: false, showSuccessAlert: false, alertMessage: ""
+      Korisnik: {}, slikaURL: null, role: [],action: "", newSlika: "", newAvatar: "", showErrorAlert: false, showSuccessAlert: false, alertMessage: ""
       , nonEditData: false
     };
 
@@ -48,9 +45,13 @@ class UserAdd extends Component {
 
   async loadKorisnik(ID) {
 
+    
+
     //registration registration
-    if (this.props.match.params.id === "registration" && this.props.auth.isAuthenticated === false) {
-      this.rola.options.selectedIndex = this.state.role.findIndex(function (element) { return element.Value === "Klijent" }) + 1;
+    if (this.props.match.params.id === "registration" ) {
+      this.rola.options.selectedIndex = this.state.role.findIndex(function (element) { return element.Value === "Client" }) + 1;
+     
+      
       this.rola.disabled = true;
       this.setState({ action: "NEWUSER" });
       return;
@@ -92,10 +93,7 @@ class UserAdd extends Component {
 
   }
 
-  // _________________________________NOVI KOD!_______________________________________________________________________________
-  // _________________________________NOVI KOD!_______________________________________________________________________________
-  // _________________________________NOVI KOD!_______________________________________________________________________________
-  // _________________________________NOVI KOD!_______________________________________________________________________________
+
   async bindPanel(action1) {
     this.closeAlerts();
     await this.setState({ action: action1 });
@@ -328,10 +326,11 @@ class UserAdd extends Component {
 
 
     };
-    console.log("sadrzaj  KORISNIK ID je: :", newKorisnik);
+ 
     return newKorisnik;
   }
   setPermision() {
+
     // REGISTRATION ( if props null, and loged user is null)
     if (this.props.match.params.id === null && this.props.auth.user.id === null) {
       this.rola.options.selectedIndex = this.state.role.findIndex(function (element) { return element.Value === "Client" }) + 1;
@@ -365,7 +364,7 @@ class UserAdd extends Component {
   }
 
 
-  render() { //console.log("ucitana slika: ",this.state.slikaURL);
+  render() { console.log("this.state.action: ",this.state.action);
 
     //if (this.state.redirect === true) {      return <Redirect to='/Korisnici' />    }
 
@@ -402,16 +401,16 @@ class UserAdd extends Component {
        
         Date of registration      <input className="form-control form-control-sm" ref={(ref) => this.datum = ref} placeholder={new Date().toJSON().slice(0, 10)} type="text" disabled />
 
-        {this.state.action === "NEWUSER" ? "" : <div><br /><br /><br /><button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.updateUser} >Save</button></div>}
+        {this.props.match.params.id === "registration"  ? "" : <div><br /><br /><br /><button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.updateUser} >Save</button></div>}
       </div>
     passInfoPanel =
       <div className="leftnavitem">
         <h4 className="text-muted"> Password</h4> <hr />
 
-        {this.state.action === "NEWUSER" ? "" : <div>Password * <input className="form-control form-control-sm" ref={(ref) => this.pass = ref} placeholder="" type="password" /></div>}
+        {this.props.match.params.id === "registration"  ? "" : <div>Password * <input className="form-control form-control-sm" ref={(ref) => this.pass = ref} placeholder="" type="password" /></div>}
         New password * <input className="form-control form-control-sm" ref={(ref) => this.newPass = ref} placeholder="" type="password" />
         Confirm password * <input className="form-control form-control-sm" ref={(ref) => this.confirmNewPass = ref} placeholder="" type="password" />
-        {this.state.action === "NEWUSER" ? "" : <div><br /><br /><br /><button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.updateUser} >Save</button></div>}
+        {this.props.match.params.id === "registration"  ? "" : <div><br /><br /><br /><button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.updateUser} >Save</button></div>}
       </div>
     permisionPanel =
       <div className="leftnavitem">
@@ -420,7 +419,7 @@ class UserAdd extends Component {
           <option value="">Choose role(type of user)</option>
           {this.state.role.map(opt => { return (<option key={opt._id} value={opt._id}>{opt.Value}</option>); })}
         </select>
-        {this.state.action === "NEWUSER" ? "" : <div><br /><br /><br /><button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.updateUser} >Save</button></div>}
+        {this.props.match.params.id === "registration"  ? "" : <div><br /><br /><br /><button type="submit" className="btn btn-primary btn btn-sm btn-block" onClick={this.updateUser} >Save</button></div>}
       </div>
     photoPanel =
       <div className="leftnavitem">

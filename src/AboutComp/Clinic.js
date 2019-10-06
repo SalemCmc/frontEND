@@ -3,40 +3,24 @@ import React, { Component } from "react";
 import animals from '../Photo/animals.png';
 import doctor from '../Photo/doctor.jpg';
 
-// REDUX:
-import { connect } from 'react-redux';
-import { getOurTeam } from '../actions/usersActions';
+
 
 class Clinic extends Component {
 
-  componentDidMount() {
-
-    if (this.props.team.length < 1) {
-     // this.props.getOurTeam();
-    }
-
-  }
-
-  // OVO IZNAD NIJE OK NESTO I PREPRAVI GRAPH QL parametre povratne da bude drugacije za ovaj poziv
-
-
+  
   render() {
-   // console.log("RENDER:", this.props.loading);
-
 
     return (
       <div >
-        <div className="custtitlebox"> <h4 className="text-muted">Our clinic</h4></div>
+       
         <div className="custcontent " style={{backgroundColor: "white"}}>
-  
-  
 
   <center>
   <img  src={animals}  alt="iconn"  />
       <h4>We care about pets</h4>
       Our small animal clinic works with animals ranging from dogs to cats, rabbits, birds, reptiles (e.g. snakes, turtles), pocket pets (i.e. hamsters, gerbils, guinea pigs) -- and more. Our veterinarians are all degreed professionals who have years of experience and our staff is warm, friendly and polite. We know you'll love our pet clinic!
-When you visit our Price Hill clinic, the staff will check you in right away. Our comfortable waiting area is designed to make all animals and people feel safe while they wait to be seen by their doctor. You'll find it's comfortable too.
-From the "small animal" section to the large dog area everyone has a place at our clinic. Come by and visit today!
+        When you visit our Price Hill clinic, the staff will check you in right away. Our comfortable waiting area is designed to make all animals and people feel safe while they wait to be seen by their doctor. You'll find it's comfortable too.
+        From the "small animal" section to the large dog area everyone has a place at our clinic. Come by and visit today!
 </center>
 <br/>
 
@@ -67,23 +51,11 @@ For the best in pet dental care and surgery, put your trust in Covedale Pet Hosp
 </center>
 </div>
 
-<hr/>
-
-
-  
-
-  
    </div>
       </div>
 
     );
   }
 }
-//export default Team;
-const mapStateToProps = state => ({
-  users: state.users,
-  team: state.users.ourTeam,
-  loading: state.users.loadingTeam
-});
+export default Clinic;
 
-export default connect(mapStateToProps, { getOurTeam })(Clinic);

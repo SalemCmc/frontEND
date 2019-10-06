@@ -7,7 +7,7 @@ import Spinner from '../CommonComponents/Spinner'
 class AppointmentTimeline extends Component {
     constructor(props) {
         super(props);
-        this.state = { Korisnik: {}, timeLineList: [], loading: true };
+        this.state = {  timeLineList: [], loading: true };
         this.loadTimeline = this.loadTimeline.bind(this);
         this.loadTimeline();
     }
